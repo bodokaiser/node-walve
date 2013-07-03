@@ -1,7 +1,11 @@
 # node-websocket-x
 
 **node-websocket-x** is a stream based implementation of the WebSocket 
-*RFC6455* protocol for node.js which tries to follow official node semantics.
+protocol for node.js which tries to follow official node semantics.
+
+**STATUS**: Currently under hard developement. Many features are not 
+implemented yet. Take a look at **node-websocket-parser** and 
+**node-websocket-upgrade** if you are interested in some WebSocket basics.
 
 ## Preview
 
@@ -10,9 +14,7 @@
     var server = http.createServer(function(request, response) {
         response.writeHead(200, { 'Content-Type': 'text/plain' });
         response.end('Hello World\n');    
-    });
-
-    server.listen(3000);
+    }).listen(3000);
 
     var wserver = new websocket.Server();
 
