@@ -23,6 +23,18 @@ describe('Server', function() {
 
     });
 
+    describe('Event: "ping"', function() {
+
+    });
+
+    describe('Event: "pong"', function() {
+
+    });
+
+    describe('Event: "error"', function() {
+
+    });
+
     describe('Event: "message"', function() {
 
         it('should be emitted when a message receives', function(done) {
@@ -46,7 +58,21 @@ describe('Server', function() {
 
     });
 
-    describe('Event: "close"', function() {
+    xdescribe('Event: "close"', function() {
+
+        it('should be emitted when close frame is received', function(done) {
+            wserver.once('close', function(incoming) {
+                incoming.once('readable', function() {
+                    chai.expect(incoming.read().toString()).to.equal('Hello');
+
+                    done();
+                });
+            });
+
+            openWebSocket('ws://localhost:3000', function(socket) {
+                socket.write(new Buffer([0x88, 0x00]));
+            });
+        });
 
     });
 
@@ -55,3 +81,13 @@ describe('Server', function() {
     }); 
 
 });
+
+function openWebSocket(url, callback) {
+    var request = new websocket.UpgradeRequest(url);
+
+    request.once('upgrade', function(response, socket) {
+        callback(socket);
+    });
+
+    request.end();
+}
