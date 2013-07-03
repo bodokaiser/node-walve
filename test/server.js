@@ -33,6 +33,25 @@ describe('WebSocketServer', function() {
 
     describe('Event: "message"', function() {
 
+        it('should be emitted when a message receives', function(done) {
+            wsserver.once('message', function(incoming) {
+                incoming.once('readable', function() {
+                    chai.expect(incoming.read().toString()).to.equal('Hello');
+
+                    done();
+                });
+            });
+            
+            var request = new UpgradeRequest('ws://localhost:3000');
+            
+            request.once('upgrade', function(response, socket) {
+                socket.write(new Buffer([0x81, 0x85, 0x37, 0xfa, 0x21, 0x3d]));
+                socket.write(new Buffer([0x7f, 0x9f, 0x4d, 0x51, 0x58]));
+            });
+
+           request.end();
+        });
+
     });
 
     describe('Event: "disconnect"', function() {
