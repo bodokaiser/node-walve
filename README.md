@@ -5,6 +5,29 @@
 
 ## Preview
 
+    var websocket = require('websocket-x');
+
+    var server = http.createServer(function(request, response) {
+        response.writeHead(200, { 'Content-Type': 'text/plain' });
+        response.end('Hello World\n');    
+    });
+
+    server.listen(3000);
+
+    var wserver = new websocket.Server();
+
+    wserver.on('open', function(outgoing) {
+        outgoing.opcode = 0x01;
+
+        outgoing.end('Hi!');
+    });
+
+    wserver.on('message', function(incoming, outgoing) {
+        incoming.pipe(outgoing);
+    });
+
+    wserver.listen(server);
+
 ## Installation
 
 The package is available on **npm** as **websocket-x**.
@@ -12,6 +35,40 @@ The package is available on **npm** as **websocket-x**.
     npm install websocket-x
 
 ## Documentation
+
+### Class: Server
+
+#### new Server()
+
+#### Event: "open"
+
+#### Event: "ping"
+
+#### Event: "pong"
+
+#### Event: "message"
+
+#### Event: "close"
+
+#### wserver.listen(server)
+
+#### wserver.close()
+
+### Class: Client
+
+#### new Client()
+
+#### Event: "open"
+
+#### Event: "ping"
+
+#### Event: "pong"
+
+#### Event: "message"
+
+#### Event: "close"
+
+#### wclient.close()
 
 ## License
 
