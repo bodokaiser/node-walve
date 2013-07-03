@@ -2,31 +2,23 @@ var chai      = require('chai');
 var http      = require('http');
 var websocket = require('../lib');
 
-var HttpServer      = http.Server;
-var WebSocketServer = websocket.Server;
+describe('Server', function() {
 
-var UpgradeRequest  = websocket.UpgradeRequest;
-
-describe('WebSocketServer', function() {
-
-    var wsserver, httpserver;
+    var server, wserver;
 
     beforeEach(function() {
-        wsserver    = new WebSocketServer();      
-        httpserver  = new HttpServer();
-
-        wsserver.listen(httpserver);
-        httpserver.listen(3000);
+        server  = new http.Server().listen(3000);
+        wserver = new websocket.Server().listen(server);      
     });
 
     describe('Event: "open"', function() {
 
         it('should be emitted when a new client connects', function(done) {
-            wsserver.once('open', function() {
+            wserver.once('open', function() {
                 done();       
             });
             
-            new UpgradeRequest('ws://localhost:3000').end();
+            new websocket.UpgradeRequest('ws://localhost:3000').end();
         });
 
     });
@@ -34,7 +26,7 @@ describe('WebSocketServer', function() {
     describe('Event: "message"', function() {
 
         it('should be emitted when a message receives', function(done) {
-            wsserver.once('message', function(incoming) {
+            wserver.once('message', function(incoming) {
                 incoming.once('readable', function() {
                     chai.expect(incoming.read().toString()).to.equal('Hello');
 
@@ -42,7 +34,7 @@ describe('WebSocketServer', function() {
                 });
             });
             
-            var request = new UpgradeRequest('ws://localhost:3000');
+            var request = new websocket.UpgradeRequest('ws://localhost:3000');
             
             request.once('upgrade', function(response, socket) {
                 socket.write(new Buffer([0x81, 0x85, 0x37, 0xfa, 0x21, 0x3d]));
@@ -59,8 +51,7 @@ describe('WebSocketServer', function() {
     });
 
     afterEach(function() {
-        httpserver.removeAllListeners();
-        httpserver.close();
+        server.removeAllListeners().close();
     }); 
 
 });

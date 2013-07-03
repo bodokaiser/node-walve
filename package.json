@@ -24,8 +24,8 @@
     },
 
     "dependencies": {
-        "websocket-parser": "0.0.1",
-        "websocket-handshake": "0.0.1"
+        "websocket-parser": "0.0.2",
+        "websocket-upgrade": "0.0.0"
     },
 
     "devDependencies": {
