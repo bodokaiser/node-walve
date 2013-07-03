@@ -19,10 +19,10 @@ describe('WebSocketServer', function() {
         httpserver.listen(3000);
     });
 
-    describe('Event: "connect"', function() {
+    describe('Event: "open"', function() {
 
         it('should be emitted when a new client connects', function(done) {
-            wsserver.once('connect', function() {
+            wsserver.once('open', function() {
                 done();       
             });
             
@@ -54,7 +54,7 @@ describe('WebSocketServer', function() {
 
     });
 
-    describe('Event: "disconnect"', function() {
+    describe('Event: "close"', function() {
 
     });
 
