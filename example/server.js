@@ -9,16 +9,19 @@ var server = http.createServer(function(request, response) {
 
 var wserver = new websocket.Server();
 
-wserver.on('connect', function() {
-    console.log('new socket connected');
+wserver.on('open', function(wsocket) {
+    console.log('open');
+    
+    wsocket.send(new Buffer('Hello'));
 });
 
-wserver.on('message', function(incoming, outgoing) {
+wserver.on('message', function(wsocket, incoming, outgoing) {
+    var message = [];
     incoming.once('readable', function() {
-        console.log('message readable', incoming.read().toString());
+        message.push(incoming.read());
     });
     incoming.once('end', function() {
-        console.log('message ended');
+        console.log('message', Buffer.concat(message).toString());
     });
 });
 
