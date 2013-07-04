@@ -195,15 +195,37 @@ describe('Outgoing', function() {
     describe('outgoing.write(chunk)', function() {
 
         it('should throw error if exceeds length', function() {
+            outgoing.assignSocket(socket);
 
+            outgoing.writeHead();
+
+            chai.expect(function() {
+                outgoing.write(new Buffer(5));
+            }).to.throw(Error);
         });
 
         it('should write unmasked payload', function() {
+            outgoing.assignSocket(socket);
 
+            outgoing.writeHead({ length: 5 });
+            outgoing.write('Hello');
+
+            chai.expect(socket.read())
+                .to.eql(Buffer.concat([new Buffer([0x81, 0x5]), 
+                        new Buffer('Hello')]));
         });
 
         it('should write masked payload', function() {
+            outgoing.assignSocket(socket);
 
+            outgoing.writeHead({ masked: true, length: 5, 
+                masking: new Buffer([0x37, 0xfa, 0x21, 0x3d]) });
+            
+            outgoing.write('Hello');
+
+            chai.expect(socket.read())
+                .to.eql(new Buffer([0x81, 0x85, 0x37, 0xfa, 0x21, 0x3d, 
+                        0x7f, 0x9f, 0x4d, 0x51, 0x58]));
         });
 
     });
