@@ -1,4 +1,4 @@
-test: test-server
+test: test-outgoing
 
-test-server:
-	./node_modules/.bin/mocha test/server.js
+test-outgoing:
+	./node_modules/.bin/mocha test/outgoing.js
