@@ -7,6 +7,8 @@ test-socket:
 	./node_modules/.bin/mocha \
 		test/socket.events.js \
 		test/socket.js
+test-client:
+	./node_modules/.bin/mocha test/client.js
 
 test-server:
 	./node_modules/.bin/mocha test/server.js

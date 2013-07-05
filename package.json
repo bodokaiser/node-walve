@@ -25,7 +25,7 @@
 
     "dependencies": {
         "websocket-parser": "0.0.2",
-        "websocket-upgrade": "0.0.0"
+        "websocket-upgrade": "0.0.1"
     },
 
     "devDependencies": {

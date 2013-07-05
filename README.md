@@ -3,10 +3,6 @@
 **node-websocket-x** is a stream based implementation of the WebSocket 
 protocol for node.js which tries to follow official node semantics.
 
-**STATUS**: Currently under hard developement. Many features are not 
-implemented yet. Take a look at **node-websocket-parser** and 
-**node-websocket-upgrade** if you are interested in some WebSocket basics.
-
 ## Preview
 
     var websocket = require('websocket-x');
@@ -18,10 +14,8 @@ implemented yet. Take a look at **node-websocket-parser** and
 
     var wserver = new websocket.Server();
 
-    wserver.on('open', function(outgoing) {
-        outgoing.opcode = 0x01;
-
-        outgoing.end('Hi!');
+    wserver.on('open', function() {
+        wserver.send(new Buffer('Hi!'));
     });
 
     wserver.on('message', function(incoming, outgoing) {
@@ -38,39 +32,163 @@ The package is available on **npm** as **websocket-x**.
 
 ## Documentation
 
+### Class: Incoming
+
+`websocket.Incoming` extends `stream.PassThrough` in order to represent an
+incoming WebSocket frame. All head information are available on the incoming
+object (e.g. `incoming.opcode`).
+
+#### Event: "readable"
+
+    var buffer = [];
+
+    incoming.on('readable', function() {
+        buffer.push(incoming.read());
+    });
+    incoming.on('end', function() {
+        console.log(Buffer.concat(buffer));
+    });
+
+Emitted when chunk is available to read. If you need to work with the frames
+payload data at once you can buffer all chunk until a `end` is emitted. See
+the above example.
+
+### Class: Outgoing
+
+`websocket.Outgoing` extends `stream.Writable` in order to represent an 
+outgoing WebSocket frame.
+
+#### new Outgoing([headers])
+
+    var outgoing = new Outgoing({
+        opcode: 0x08, length: 0x03, masked: true
+    });
+
+Creates a new instance of `Outgoing`.
+
+#### outgoing.assignSocket(socket)
+
+    server.on('upgrade', function(request, socket) {
+        // respond WebSocket handshake
+
+        var outgoing = new Outgoing();
+
+        outgoing.assignSocket(socket);
+
+        // now we can use the outgoing
+    });
+
+Assign an instance of `net.Socket` to it. This is required in order to write
+data to it. If `outgoing` was emitted with an event it has already an assigned
+Socket.
+
+#### outgoing.writeHead([headers])
+
+    outgoing.writeHead({
+        fin: false, opcode: 0x2, length: 0x05
+    });
+
+Writes a frame head to socket. Overwrites frame head with `headers` if present
+else uses the already defined defaults. This method must be called before
+writting the payload.
+
+#### outgoing.write(chunk)
+
+    outgoing.write(new Buffer('Hello'));
+
+Writes payload to the frame. Does auto masking if `outgoing.masked` is `true`.
+Throws an error when payload length exceeds header length.
+
+#### outgoing.end([chunk])
+
+Similar to `outgoing.write(chunk)` except it ends a frame.
+
+### Class: Socket
+
+`websocket.Socket` is a wrapper around `net.Socket` which ability to read and
+write WebSocket frames. It is uses from `Client` and `Server` as underlaying 
+API.
+
+#### wsocket.send([message])
+
+    wsocket.send(new Buffer('Hello World'));
+
+Sends a text frame with `Hello World` as payload.
+
+#### wsocket.ping([message])
+
+    wsocket.ping();
+
+Sends a ping frame through the socket.
+
+#### wsocket.close([message])
+
+    wsocket.close();
+
+Sends a close frame and closes the socket.
+
 ### Class: Server
 
-#### new Server()
+`websocket.Server` extends `events.EventEmitter` to be used as WebSocket server.
+
+#### new Server([options])
+
+    var wserver = new websocket.Server();
+
+Creates a new instance of `Server`.
 
 #### Event: "open"
 
-#### Event: "ping"
+    wserver.on('open', function(wsocket) {
+        wsocket.send(new Buffer('Hello'));
+    });
+
+Emitted when a new client has connected.
 
 #### Event: "pong"
 
+    wserver.on('ping', function(wsocket, incoming, outgoing) {
+        incoming.pipe(fs.createWriteStream('ping.log'));
+    });
+
+Emitted when a pong frame is received.
+
 #### Event: "message"
 
+    wserver.on('message', function(wsocket, incoming, outgoing) {
+        incoming.pipe(outgoing);
+    });
+
+Emitted when a text or binary frame is received.
+
 #### Event: "close"
+
+    wserver.on('close', function(wsocket, incoming) {
+        if (incoming.length == 0x00) return;
+
+        incoming.pipe(fs.createWriteStream('reasons.log'));
+    });
+
+Emitted when a close frame is received. `incoming` may contain a close reason.
+
+#### Event: "end"
+
+#### Event: "error"
+
+    wserver.on('error', function(error) {
+        console.log(error);
+    }),
+
+Emitted when an error occurs (e.g. invalid upgrade request).
 
 #### wserver.listen(server)
 
-#### wserver.close()
+    var server = new http.Server().listen(3000);
 
-### Class: Client
+    wserver.listen(server);
 
-#### new Client()
-
-#### Event: "open"
-
-#### Event: "ping"
-
-#### Event: "pong"
-
-#### Event: "message"
-
-#### Event: "close"
-
-#### wclient.close()
+Binds instance of `Server` to a HTTP servers `upgrade` event in order to handle
+WebSocket handshakes and incoming frames.
 
 ## License
 

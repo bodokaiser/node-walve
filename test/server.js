@@ -37,7 +37,16 @@ describe('Server', function() {
                 chai.expect(incoming).to.be.an.instanceof(websocket.Incoming);
                 chai.expect(outgoing).to.be.an.instanceof(websocket.Outgoing);
                 
-                done();
+                var buffer = [];
+                incoming.on('readable', function() {
+                    buffer.push(incoming.read());
+                });
+                incoming.on('end', function() {
+                    chai.expect(Buffer.concat(buffer))
+                        .to.eql(new Buffer('Hey'));
+
+                    done();
+                });
             });
 
             var req = new websocket.UpgradeRequest('ws://localhost:3000');
