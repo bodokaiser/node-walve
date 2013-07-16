@@ -181,6 +181,19 @@ Emitted when a close frame is received. `incoming` may contain a close reason.
 
 Emitted when an error occurs (e.g. invalid upgrade request).
 
+#### wserver.broadcast(message)
+
+    wserver.on('message', function(wsocket, incoming) {
+        var buffer = [];
+        
+        incoming.on('readable', function() {
+            buffer.push(incoming.read());
+        });
+        incoming.on('end', function() {
+            wserver.broadcast(Buffer.concat(buffer));
+        });
+    });
+
 #### wserver.listen(server)
 
     var server = new http.Server().listen(3000);
