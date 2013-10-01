@@ -1,6 +1,7 @@
 var chai      = require('chai');
 var stream    = require('stream');
-var websocket = require('../lib');
+
+var websocketx = require('../../library');
 
 describe('Outgoing', function() {
 
@@ -9,7 +10,7 @@ describe('Outgoing', function() {
     describe('new Outgoing([headers])', function() {
 
         it('should set default headers', function() {
-            var outgoing = new websocket.Outgoing();
+            var outgoing = new websocketx.Outgoing();
 
             chai.expect(outgoing).to.have.property('fin', true);
             chai.expect(outgoing).to.have.property('rsv1', false);
@@ -22,7 +23,7 @@ describe('Outgoing', function() {
         });
 
         it('should overwrite default headers', function() {
-            var outgoing = new websocket.Outgoing({
+            var outgoing = new websocketx.Outgoing({
                 fin: false, rsv1: true, rsv2: true, rsv3: true, masked: true,
                 opcode: 0x08, length: 0x05, masking: new Buffer(4)
             });
@@ -41,7 +42,7 @@ describe('Outgoing', function() {
  
     beforeEach(function() {
         socket   = new stream.PassThrough();
-        outgoing = new websocket.Outgoing();
+        outgoing = new websocketx.Outgoing();
     });
 
     describe('outgoing.assignSocket(socket)', function() {

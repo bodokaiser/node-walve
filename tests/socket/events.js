@@ -1,12 +1,13 @@
 var chai      = require('chai');
 var stream    = require('stream');
-var websocket = require('../lib');
+
+var websocketx = require('../../library');
 
 describe('Socket', function() {
 
     beforeEach(function() {
         source = new stream.PassThrough();
-        socket = new websocket.Socket(source);
+        socket = new websocketx.Socket(source);
     });
 
     describe('Event: "pong"', function() {

@@ -1,6 +1,7 @@
 var chai      = require('chai');
 var http      = require('http');
-var websocket = require('../lib');
+
+var websocketx = require('../../library');
 
 describe('Server', function() {
 
@@ -8,7 +9,7 @@ describe('Server', function() {
 
     beforeEach(function() {
         server = new http.Server().listen(3000);
-        wserver = new websocket.Server().listen(server);
+        wserver = new websocketx.Server().listen(server);
     });
 
     afterEach(function() {
@@ -19,12 +20,12 @@ describe('Server', function() {
 
         it('should be emitted when a new client connects', function(done) {
             wserver.once('open', function(wsocket) {
-                chai.expect(wsocket).to.be.an.instanceof(websocket.Socket);
+                chai.expect(wsocket).to.be.an.instanceof(websocketx.Socket);
                 
                 done();
             });
 
-            new websocket.UpgradeRequest('ws://localhost:3000').end();
+            new websocketx.UpgradeRequest('ws://localhost:3000').end();
         });
 
     });
@@ -33,9 +34,9 @@ describe('Server', function() {
 
         it('should be emitted when a pong frame is received', function(done) {
             wserver.once('pong', function(wsocket, incoming, outgoing) {
-                chai.expect(wsocket).to.be.an.instanceof(websocket.Socket);
-                chai.expect(incoming).to.be.an.instanceof(websocket.Incoming);
-                chai.expect(outgoing).to.be.an.instanceof(websocket.Outgoing);
+                chai.expect(wsocket).to.be.an.instanceof(websocketx.Socket);
+                chai.expect(incoming).to.be.an.instanceof(websocketx.Incoming);
+                chai.expect(outgoing).to.be.an.instanceof(websocketx.Outgoing);
                 
                 var buffer = [];
                 incoming.on('readable', function() {
@@ -49,7 +50,7 @@ describe('Server', function() {
                 });
             });
 
-            var req = new websocket.UpgradeRequest('ws://localhost:3000');
+            var req = new websocketx.UpgradeRequest('ws://localhost:3000');
 
             req.once('upgrade', function(response, socket) {
                 socket.write(new Buffer([0x8a, 0x03, 0x48, 0x65, 0x79]));
@@ -64,9 +65,9 @@ describe('Server', function() {
 
         it('should be emitted when a text frame is received', function(done) {
             wserver.once('message', function(wsocket, incoming, outgoing) {
-                chai.expect(wsocket).to.be.an.instanceof(websocket.Socket);
-                chai.expect(incoming).to.be.an.instanceof(websocket.Incoming);
-                chai.expect(outgoing).to.be.an.instanceof(websocket.Outgoing);
+                chai.expect(wsocket).to.be.an.instanceof(websocketx.Socket);
+                chai.expect(incoming).to.be.an.instanceof(websocketx.Incoming);
+                chai.expect(outgoing).to.be.an.instanceof(websocketx.Outgoing);
                 
                 var buffer = [];
                 incoming.on('readable', function() {
@@ -80,7 +81,7 @@ describe('Server', function() {
                 });
             });
 
-            var req = new websocket.UpgradeRequest('ws://localhost:3000');
+            var req = new websocketx.UpgradeRequest('ws://localhost:3000');
 
             req.once('upgrade', function(response, socket) {
                 socket.write(new Buffer([0x81, 0x85, 0x37, 0xfa, 0x21]));
@@ -93,9 +94,9 @@ describe('Server', function() {
 
         it('should be emitted when a binary frame is received', function(done) {
             wserver.once('message', function(wsocket, incoming, outgoing) {
-                chai.expect(wsocket).to.be.an.instanceof(websocket.Socket);
-                chai.expect(incoming).to.be.an.instanceof(websocket.Incoming);
-                chai.expect(outgoing).to.be.an.instanceof(websocket.Outgoing);
+                chai.expect(wsocket).to.be.an.instanceof(websocketx.Socket);
+                chai.expect(incoming).to.be.an.instanceof(websocketx.Incoming);
+                chai.expect(outgoing).to.be.an.instanceof(websocketx.Outgoing);
                 
                 var buffer = [];
                 incoming.on('readable', function() {
@@ -109,7 +110,7 @@ describe('Server', function() {
                 });
             });
 
-            var req = new websocket.UpgradeRequest('ws://localhost:3000');
+            var req = new websocketx.UpgradeRequest('ws://localhost:3000');
 
             req.once('upgrade', function(response, socket) {
                 socket.write(new Buffer([0x82, 0x03, 0x01, 0x02, 0x03]));
@@ -124,8 +125,8 @@ describe('Server', function() {
 
         it('should be emitted when a close frame is received', function(done) {
             wserver.once('close', function(wsocket, incoming) {
-                chai.expect(wsocket).to.be.an.instanceof(websocket.Socket);
-                chai.expect(incoming).to.be.an.instanceof(websocket.Incoming);
+                chai.expect(wsocket).to.be.an.instanceof(websocketx.Socket);
+                chai.expect(incoming).to.be.an.instanceof(websocketx.Incoming);
                 
                 var buffer = [];
                 incoming.on('readable', function() {
@@ -139,7 +140,7 @@ describe('Server', function() {
                 });
             });
 
-            var req = new websocket.UpgradeRequest('ws://localhost:3000');
+            var req = new websocketx.UpgradeRequest('ws://localhost:3000');
 
             req.once('upgrade', function(response, socket) {
                 socket.write(new Buffer([0x88, 0x03, 0x48, 0x65, 0x79]));

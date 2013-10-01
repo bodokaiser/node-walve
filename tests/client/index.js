@@ -1,6 +1,7 @@
 var chai      = require('chai');
 var http      = require('http');
-var websocket = require('../lib');
+
+var websocketx = require('../../library');
 
 describe('Client', function() {
 
@@ -8,7 +9,7 @@ describe('Client', function() {
 
     beforeEach(function() {
         server = new http.Server().listen(3000);
-        client = new websocket.Client('ws://localhost:3000');
+        client = new websocketx..Client('ws://localhost:3000');
     });
 
     afterEach(function() {
@@ -21,7 +22,7 @@ describe('Client', function() {
 
         it('should be emitted on valid upgrade response', function(done) {
             server.once('upgrade', function(request, socket) {
-                var response = new websocket.UpgradeResponse(request);
+                var response = new websocketx..UpgradeResponse(request);
 
                 response.assignSocket(socket);
                 response.end();
@@ -58,7 +59,7 @@ describe('Client', function() {
             });
             
             server.once('upgrade', function(request, socket) {
-                var response = new websocket.UpgradeResponse(request);
+                var response = new websocketx..UpgradeResponse(request);
 
                 response.assignSocket(socket);
                 response.end();
@@ -87,7 +88,7 @@ describe('Client', function() {
             });
             
             server.once('upgrade', function(request, socket) {
-                var response = new websocket.UpgradeResponse(request);
+                var response = new websocketx.UpgradeResponse(request);
 
                 response.assignSocket(socket);
                 response.end();
@@ -108,7 +109,7 @@ describe('Client', function() {
 
         xit('should send a message to the server', function(done) {
             server.once('upgrade', function(request, socket) {
-                var response = new websocket.UpgradeResponse(request);
+                var response = new websocketx.UpgradeResponse(request);
 
                 response.assignSocket(socket);
                 response.end();
