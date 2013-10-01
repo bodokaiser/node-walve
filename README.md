@@ -5,24 +5,20 @@ protocol for node.js which tries to follow official node semantics.
 
 ## Preview
 
-    var websocket = require('websocket-x');
+    var websocketx = require('websocket-x');
 
     var server = http.createServer(function(request, response) {
         response.writeHead(200, { 'Content-Type': 'text/plain' });
         response.end('Hello World\n');    
     }).listen(3000);
 
-    var wserver = new websocket.Server();
+    var wsserver = websocketx.createServer(function(wssocket) {
 
-    wserver.on('open', function() {
-        wserver.send(new Buffer('Hi!'));
-    });
+        wssocket.on('message', function(incoming, outgoing) {
+            incoming.pipe(outgoing);
+        });
 
-    wserver.on('message', function(incoming, outgoing) {
-        incoming.pipe(outgoing);
-    });
-
-    wserver.listen(server);
+    }).listen(server);
 
 ## Installation
 
@@ -131,11 +127,12 @@ Sends a close frame and closes the socket.
 
 `websocket.Server` extends `events.EventEmitter` to be used as WebSocket server.
 
-#### new Server([options])
+#### new Server([listener], [options])
 
-    var wserver = new websocket.Server();
+    var wserver = new websocketx.Server();
 
-Creates a new instance of `Server`.
+Creates a new instance of `Server`. If first parameter is a function this will
+be used as listener for the "open" Event.
 
 #### Event: "open"
 

@@ -4,7 +4,7 @@ var events    = require('events');
 var wsupgrade = require('websocket-upgrade');
 var Socket    = require('./socket');
 
-function Server(options) {
+function Server(listener, options) {
     options = options || {};
     
     events.EventEmitter.call(this);
@@ -14,6 +14,9 @@ function Server(options) {
 
     if (options.timeout)
         this.timeout = options.timeout || 0;
+
+    if (listener)
+        this.addListener('open', listener);
 }
 
 util.inherits(Server, events.EventEmitter);

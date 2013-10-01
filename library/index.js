@@ -14,3 +14,7 @@ exports.UpgradeResponse = wsupgrade.UpgradeResponse;
 
 exports.validateUpgradeRequest  = wsupgrade.validateUpgradeRequest;
 exports.validateUpgradeResponse = wsupgrade.validateUpgradeResponse;
+
+exports.createServer = function(listener) {
+    return new exports.Server(listener);
+};
