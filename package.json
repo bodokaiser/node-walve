@@ -11,11 +11,16 @@
     "keywords": ["websocket", "network", "rfc6455"],
 
     "description": "stream based WebSocket implementation for node.js",
-
-    "main": "lib/index.js",
+    
+    "main": "library/index.js",
 
     "scripts": {
         "test": "make test"
+    },
+    
+    "engines": {
+        "node": "0.10.*",
+        "npm": "1.3.*"
     },
 
     "repository": {
@@ -29,8 +34,8 @@
     },
 
     "devDependencies": {
-        "chai": "1.6.1",
-        "mocha": "1.11.0"
+        "chai": "1.8.0",
+        "mocha": "1.13.0"
     },
 
     "bugs": {
