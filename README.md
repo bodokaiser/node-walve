@@ -12,7 +12,7 @@ protocol for node.js which tries to follow official node semantics.
         response.end('Hello World\n');    
     }).listen(3000);
 
-    var wsserver = websocketx.createServer(function(wssocket) {
+    websocketx.createServer(function(wssocket, wsserver) {
 
         wssocket.on('message', function(incoming, outgoing) {
             incoming.pipe(outgoing);
@@ -136,7 +136,7 @@ be used as listener for the "open" Event.
 
 #### Event: "open"
 
-    wserver.on('open', function(wsocket) {
+    wserver.on('open', function(wsocket, wserver) {
         wsocket.send(new Buffer('Hello'));
     });
 

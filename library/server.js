@@ -94,5 +94,5 @@ function handleStream(server, socket) {
 
     server.connections.push(wsocket);
 
-    server.emit('open', wsocket);
+    server.emit('open', wsocket, server);
 }
