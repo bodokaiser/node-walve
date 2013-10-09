@@ -13,7 +13,7 @@ function Server(listener, options) {
     this.connections = [];
 
     if (options.timeout)
-        this.timeout = options.timeout || 10 * 60 * 1000;
+        this.timeout = options.timeout;
 
     if (listener)
         this.addListener('open', listener);
