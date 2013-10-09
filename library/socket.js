@@ -114,6 +114,10 @@ function bindSourceToParser(socket, source) {
 
 function bindSourceToSocket(socket, source) {
     socket.source = source;
+
+    socket.source.on('timeout', function() {
+        socket.source.end();
+    });
 }
 
 function handleIncoming(socket, source, incoming) {

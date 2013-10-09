@@ -123,6 +123,19 @@ Sends a ping frame through the socket.
 
 Sends a close frame and closes the socket.
 
+#### Event: "message"
+
+Emitted when a message is received. Incoming and Outgoing streams are passed.
+
+#### Event: "close"
+
+Emitted when a close frame is received. Passes the close frame as incoming
+stream to callback.
+
+#### Event: "end"
+
+Emitted when socket is closed by one of the sides.
+
 ### Class: Server
 
 `websocket.Server` extends `events.EventEmitter` to be used as WebSocket server.
