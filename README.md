@@ -18,7 +18,7 @@ protocol for node.js which tries to follow official node semantics.
             incoming.pipe(outgoing);
         });
 
-    }).listen(server);
+    }, { timeout: 60 * 1000 }).listen(server);
 
 ## Installation
 
