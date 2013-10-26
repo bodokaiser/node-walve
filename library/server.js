@@ -49,7 +49,7 @@ function handleUpgrade(request, socket, callback) {
     var error = wsupgrade.validateUpgradeRequest(request);
 
     if (error) {
-        var response = http.ServerResponse(request);
+        var response = new http.ServerResponse(request);
 
         response.writeHead(404, { 'Content-Type': 'text/plain' });
         response.write('Invalid HTTP WebSocket upgrade request.\n');
