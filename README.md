@@ -3,6 +3,8 @@
 **node-websocket-x** is a stream based implementation of the WebSocket 
 protocol for node.js which tries to follow official node semantics.
 
+Checkout [nearby](https://github.com/bodokaiser/nearby) to see a working real life example!
+
 ## Preview
 
     var websocketx = require('websocket-x');
