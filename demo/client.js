@@ -1,6 +1,6 @@
-var websocket = require('../lib');
+var lib = require('../lib');
 
-var client = new websocket.Client('ws://echo.websocket.org');
+var client = new lib.Client('ws://echo.websocket.org');
 
 client.on('open', function() {
     console.log('connection established');

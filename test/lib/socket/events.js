@@ -1,9 +1,7 @@
-var chai      = require('chai');
-var stream    = require('stream');
+var chai   = require('chai');
+var stream = require('stream');
 
-var websocketx = require('../../library');
-
-describe('Socket', function() {
+module.exports = function() {
 
     beforeEach(function() {
         source = new stream.PassThrough();
@@ -111,4 +109,5 @@ describe('Socket', function() {
 
     });
 
-});
+};
+

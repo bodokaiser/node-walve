@@ -1,17 +1,15 @@
-test: test-outgoing test-socket test-server
+MOCHA = node_modules/.bin/mocha
 
-test-outgoing:
-	./node_modules/.bin/mocha \
-		tests/outgoing
+MOCHA_FLAGS = \
+		--reporter spec
 
-test-socket:
-	./node_modules/.bin/mocha \
-		tests/socket
+test: test-lib
 
-test-client:
-	./node_modules/.bin/mocha \
-		tests/client
+test-lib:
+	$(MOCHA) $(MOCHA_FLAGS) \
+		test/lib/outgoing	\
+		test/lib/socket		\
+		test/lib/client		\
+		test/lib/server
 
-test-server:
-	./node_modules/.bin/mocha \
-		tests/server
+.PHONY: test

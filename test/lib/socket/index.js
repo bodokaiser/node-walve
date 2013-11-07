@@ -1,7 +1,7 @@
-var chai      = require('chai');
-var stream    = require('stream');
+var chai   = require('chai');
+var stream = require('stream');
 
-var websocketx = require('../../library');
+var lib    = require('../../../lib');
 
 describe('Socket', function() {
 
@@ -11,14 +11,14 @@ describe('Socket', function() {
 
         it('should throw an error if source is not provided', function() {
             chai.expect(function() {
-                new websocketx.Socket();
+                new lib.Socket();
             }).to.throw(Error);
         });
 
         it('should bind the source to socket', function() {
             source = new stream.PassThrough();
             
-            chai.expect(new websocketx.Socket(source))
+            chai.expect(new lib.Socket(source))
                 .to.have.property('source', source);
         });
 
@@ -35,7 +35,7 @@ describe('Socket', function() {
             done();
         };
 
-        socket = new websocketx.Socket(source);
+        socket = new lib.Socket(source);
     });
 
     describe('socket.ping([message])', function() {
@@ -100,5 +100,7 @@ describe('Socket', function() {
         });
 
     });
+
+    require('./events');
 
 });
