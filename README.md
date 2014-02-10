@@ -1,32 +1,23 @@
-# node-websocket-x
+# salvatore
 
-**node-websocket-x** is a stream based implementation of the WebSocket 
-protocol for node.js which tries to follow official node semantics.
+**salvatore** is a stream based WebSocket implementation for node.js.
 
-Checkout [nearby](https://github.com/bodokaiser/nearby) to see a working real life example!
+    var salvatore = require('salvatore');
 
-## Preview
+    salvatore.createServer(function(wsocket, wserver) {
 
-    var websocketx = require('websocket-x');
+      wsocket.on('message', function(incoming, outgoing) {
+        incoming.pipe(wserver);
+      });
 
-    var server = http.createServer(function(request, response) {
-        response.writeHead(200, { 'Content-Type': 'text/plain' });
-        response.end('Hello World\n');    
-    }).listen(3000);
 
-    websocketx.createServer(function(wssocket, wsserver) {
-
-        wssocket.on('message', function(incoming, outgoing) {
-            incoming.pipe(outgoing);
-        });
-
-    }, { timeout: 60 * 1000 }).listen(server);
+    }).listen(server);
 
 ## Installation
 
-The package is available on **npm** as **websocket-x**.
+The package is available on **npm** as **salvatore**.
 
-    npm install websocket-x
+    npm install --save salvatore
 
 ## Documentation
 
@@ -217,7 +208,7 @@ WebSocket handshakes and incoming frames.
 
 ## License
 
-Copyright 2013 Bodo Kaiser <i@bodokaiser.io>
+Copyright 2014 Bodo Kaiser <i@bodokaiser.io>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
