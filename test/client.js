@@ -1,7 +1,7 @@
 var chai = require('chai');
 var http = require('http');
 
-var lib  = require('../../../lib');
+var lib  = require('../lib');
 
 describe('Client', function() {
 

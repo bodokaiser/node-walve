@@ -1,7 +1,7 @@
 var chai   = require('chai');
 var stream = require('stream');
 
-var lib    = require('../../../lib');
+var lib    = require('../lib');
 
 describe('Outgoing', function() {
 
