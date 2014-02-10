@@ -8,11 +8,11 @@ describe('Outgoing', function() {
 
   });
 
-  describe('outgoing.write', function() {
+  describe('#write(data)', function() {
 
   });
 
-  describe('outgoing.end', function() {
+  describe('#end([data])', function() {
 
   });
 
