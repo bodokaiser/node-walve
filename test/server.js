@@ -8,7 +8,7 @@ describe('Server', function() {
 
   });
 
-  describe('Event: "connection"', function() {
+  describe('Event: "connect"', function() {
 
   });
 

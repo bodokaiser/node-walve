@@ -21,39 +21,78 @@ The package is available on **npm** as **salvatore**.
 
 #### new Server()
 
-#### Event: "connection"
+Listens on the "upgrade" event of a http server and handles connected
+WebSockets.
+
+#### Event: "open"
+
+Emitted when a new WebSocket upgrade was established.
 
 #### Event: "close"
+
+Emitted when the server closes.
 
 #### Event: "error"
 
+Emitted when an error occurs.
+
 #### server.listen(http)
+
+Listens on the "upgrade" event of the `http` instance.
 
 ### Socket
 
+Abstracts a single WebSocket connection.
+
 #### new Socket(socket)
 
-#### Event: "connect"
+Creates a new `Socket` which abstracts a tcp `socket` supplied by the
+http "upgrade" event.
 
 #### Event: "message"
 
+Emitted when a WebSocket frame is received.
+
 #### Event: "close"
+
+Emitted when a WebSocket close frame is received.
+
+#### Event: "ping"
+
+Emitted when a WebSocket ping frame is received.
 
 #### Event: "end"
 
-#### socket.write(data)
-
-#### socket.close(data)
-
-#### socket.end(data)
+Emitted when the underlaying socket ends.
 
 ### Incoming
 
+Abstracts an incoming WebSocket frame (stream).
+
 #### new Incoming()
+
+#### Event: "readable"
+
+#### Event: "end"
 
 ### Outgoing
 
-#### new Outgoing()
+Abstracts an outgoing WebSocket frame (stream).
+
+#### new Outgoing(socket)
+
+Creates a new instance of `Outgoing` bound to `socket`.
+
+#### outgoing.write(data)
+
+Writes data to a WebSocket. Except you directly use `outgoing.end()` the
+written data will be sent as fragmented frame. This is the only way to
+have a true stream like approach else we always would require the
+complete payload length.
+
+#### outgoing.end([data])
+
+Ends a fragmented frame stream.
 
 ## License
 

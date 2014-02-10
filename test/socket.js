@@ -8,10 +8,6 @@ describe('Socket', function() {
 
   });
 
-  describe('Event: "connect"', function() {
-
-  });
-
   describe('Event: "message"', function() {
 
   });
@@ -21,6 +17,10 @@ describe('Socket', function() {
   });
 
   describe('Event: "error"', function() {
+
+  });
+
+  describe('Event: "ping"', function() {
 
   });
 
