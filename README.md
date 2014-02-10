@@ -4,13 +4,9 @@
 
     var salvatore = require('salvatore');
 
+    // will broadcast all incoming messages to all sockets
     salvatore.createServer(function(wsocket, wserver) {
-
-      wsocket.on('message', function(incoming, outgoing) {
-        incoming.pipe(wserver);
-      });
-
-
+      wsocket.pipe(wserver);
     }).listen(server);
 
 ## Installation
@@ -23,11 +19,41 @@ The package is available on **npm** as **salvatore**.
 
 ### Server
 
+#### new Server()
+
+#### Event: "connection"
+
+#### Event: "close"
+
+#### Event: "error"
+
+#### server.listen(http)
+
 ### Socket
+
+#### new Socket(socket)
+
+#### Event: "connect"
+
+#### Event: "message"
+
+#### Event: "close"
+
+#### Event: "end"
+
+#### socket.write(data)
+
+#### socket.close(data)
+
+#### socket.end(data)
 
 ### Incoming
 
+#### new Incoming()
+
 ### Outgoing
+
+#### new Outgoing()
 
 ## License
 
