@@ -1,16 +1,23 @@
-var chai      = require('chai');
-var http      = require('http');
-var events    = require('events');
-var salvatore = require('../lib');
+var chai   = require('chai');
+var http   = require('http');
+var salv   = require('../lib');
+var events = require('events');
+
+const PORT = process.env.PORT || 3000;
 
 describe('Server', function() {
+
+  var server, wserver;
+
+  beforeEach(function() {
+    server = new http.Server().listen(PORT);
+    wserver = new salv.Server().listen(server);
+  });
 
   describe('new Server([options])', function() {
 
     it('should return instance of EventEmitter', function() {
-      var server = new salvatore.Server();
-
-      chai.expect(server).to.be.an.instanceOf(events.EventEmitter);
+      chai.expect(wserver).to.be.an.instanceOf(events.EventEmitter);
     });
 
   });
@@ -18,27 +25,14 @@ describe('Server', function() {
   describe('#listen(server)', function() {
 
     it('should listen to the servers "upgrade" event', function() {
-      var server = new http.Server();
-      var wserver = new salvatore.Server();
+      wserver = new salv.Server().listen(server);
 
-      wserver.listen(server);
-
-      chai.expect(server.listeners('upgrade')).to.have.length(1);
+      chai.expect(server.listeners('upgrade')).to.have.length(2);
     });
 
   });
 
   describe('Event: "connect"', function() {
-
-    var server, wserver;
-
-    beforeEach(function() {
-      server = new http.Server();
-      wserver = new salvatore.Server();
-
-      server.listen(3000);
-      wserver.listen(server);
-    });
 
     it('should be emitted on successful http upgrade', function(done) {
       http.request({
@@ -48,20 +42,20 @@ describe('Server', function() {
           'Sec-WebSocket-Key': '1234',
           'Sec-WebSocket-Version': '13'
         },
-        port: 3000
+        port: PORT
       }).end();
 
       wserver.once('connect', done);
-    });
-
-    afterEach(function() {
-      server.close();
     });
 
   });
 
   describe('Event: "error"', function() {
 
+  });
+
+  afterEach(function() {
+    server.close();
   });
 
 });

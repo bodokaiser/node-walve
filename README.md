@@ -1,19 +1,19 @@
-# salvatore
+# salv
 
-**salvatore** is a stream based WebSocket implementation for node.js.
+**salv** is a stream based WebSocket implementation for node.js.
 
-    var salvatore = require('salvatore');
+    var salv = require('salv');
 
     // will broadcast all incoming messages to all sockets
-    salvatore.createServer(function(wsocket, wserver) {
+    salv.createServer(function(wsocket, wserver) {
       wsocket.pipe(wserver);
     }).listen(server);
 
 ## Installation
 
-The package is available on **npm** as **salvatore**.
+The package is available on **npm** as **salv**.
 
-    npm install --save salvatore
+    npm install --save salv
 
 ## Documentation
 

@@ -1,19 +1,19 @@
-var chai      = require('chai');
-var http      = require('http');
-var stream    = require('stream');
-var salvatore = require('../lib');
+var chai   = require('chai');
+var http   = require('http');
+var salv   = require('../lib');
+var stream = require('stream');
 
-describe('UpgradeResponse', function() {
+describe('Response', function() {
 
   var source, request, response;
 
   beforeEach(function() {
     source = new stream.PassThrough();
     request = new http.IncomingMessage(source);
-    response = new salvatore.Response(request);
+    response = new salv.Response(request);
   });
 
-  describe('new UpgradeResponse(request)', function() {
+  describe('new Response(request)', function() {
 
     xit('should be an instance of ServerResponse', function() {
       chai.expect(response).to.be.instanceOf(http.ServerResponse);

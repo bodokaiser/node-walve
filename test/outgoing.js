@@ -1,6 +1,6 @@
-var chai      = require('chai');
-var stream    = require('stream');
-var salvatore = require('../lib');
+var chai   = require('chai');
+var salv   = require('../lib');
+var stream = require('stream');
 
 describe('Outgoing', function() {
 
