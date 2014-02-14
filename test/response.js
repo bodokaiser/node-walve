@@ -1,7 +1,7 @@
 var chai   = require('chai');
 var http   = require('http');
-var salv   = require('../lib');
 var stream = require('stream');
+var wesos  = require('../lib');
 
 describe('Response', function() {
 
@@ -10,7 +10,7 @@ describe('Response', function() {
   beforeEach(function() {
     source = new stream.PassThrough();
     request = new http.IncomingMessage(source);
-    response = new salv.Response(request);
+    response = new wesos.Response(request);
   });
 
   describe('new Response(request)', function() {

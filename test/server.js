@@ -1,7 +1,7 @@
 var chai   = require('chai');
 var http   = require('http');
-var salv   = require('../lib');
 var events = require('events');
+var wesos  = require('../lib');
 
 const PORT = process.env.PORT || 3000;
 
@@ -11,7 +11,7 @@ describe('Server', function() {
 
   beforeEach(function() {
     server = new http.Server().listen(PORT);
-    wserver = new salv.Server().listen(server);
+    wserver = new wesos.Server().listen(server);
   });
 
   describe('new Server([options])', function() {
@@ -25,7 +25,7 @@ describe('Server', function() {
   describe('#listen(server)', function() {
 
     it('should listen to the servers "upgrade" event', function() {
-      wserver = new salv.Server().listen(server);
+      wserver = new wesos.Server().listen(server);
 
       chai.expect(server.listeners('upgrade')).to.have.length(2);
     });

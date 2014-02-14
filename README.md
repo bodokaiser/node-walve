@@ -1,19 +1,19 @@
-# salv
+# wesos
 
-**salv** is a stream based WebSocket implementation for node.js.
+**wesos** is a stream based WebSocket implementation for node.js.
 
-    var salv = require('salv');
+    var wesos = require('wesos');
 
     // will broadcast all incoming messages to all sockets
-    salv.createServer(function(wsocket, wserver) {
+    wesos.createServer(function(wsocket, wserver) {
       wsocket.pipe(wserver);
     }).listen(server);
 
 ## Installation
 
-The package is available on **npm** as **salv**.
+The package is available on **npm** as **wesos**.
 
-    npm install --save salv
+    npm install --save wesos
 
 ## Documentation
 

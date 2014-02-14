@@ -1,13 +1,13 @@
 var chai   = require('chai');
-var salv   = require('../lib');
 var stream = require('stream');
+var wesos  = require('../lib');
 
 describe('Incoming', function() {
 
   var incoming;
 
   beforeEach(function() {
-    incoming = new salv.Incoming();
+    incoming = new wesos.Incoming();
   });
 
   describe('new Incoming()', function() {
