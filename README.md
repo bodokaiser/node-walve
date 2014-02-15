@@ -4,9 +4,10 @@
 
     var walve = require('walve');
 
-    // will broadcast all incoming messages to all sockets
-    walve.createServer(function(wsocket, wserver) {
-      wsocket.pipe(wserver);
+    walve.createServer(function(wsocket) {
+      wsocket.on('message', function(incoming) {
+        // handle readable incoming stream
+      });
     }).listen(server);
 
 ## Installation
@@ -19,22 +20,18 @@ The package is available on **npm** as **walve**.
 
 ### Server
 
-#### new Server()
+#### new Server([options])
 
-Listens on the "upgrade" event of a http server and handles connected
-WebSockets.
+Creates a new `Server` instance.
 
-#### Event: "open"
+#### Event: "connect"
 
-Emitted when a new WebSocket upgrade was established.
-
-#### Event: "close"
-
-Emitted when the server closes.
+Emitted when a new WebSocket upgrade was established. Provides instance
+of `Socket` as argument.
 
 #### Event: "error"
 
-Emitted when an error occurs.
+Emitted when an error occurs. For example on failed upgrade.
 
 #### server.listen(http)
 
@@ -46,53 +43,120 @@ Abstracts a single WebSocket connection.
 
 #### new Socket(socket)
 
-Creates a new `Socket` which abstracts a tcp `socket` supplied by the
-http "upgrade" event.
+Creates a new duplex stream `Socket` which reads and writes from the
+underlaying TCP socket.
 
 #### Event: "message"
 
-Emitted when a WebSocket frame is received.
+    wsocket.on('message', function(incoming) {
+      incoming.pipe(process.stdout);
+    });
 
-#### Event: "close"
-
-Emitted when a WebSocket close frame is received.
-
-#### Event: "ping"
-
-Emitted when a WebSocket ping frame is received.
+Emitted when a WebSocket frame is received. First argument is a an
+instance of `Incoming`.
 
 #### Event: "end"
 
-Emitted when the underlaying socket ends.
+Emitted when the TCP connection closes.
 
 ### Incoming
 
-Abstracts an incoming WebSocket frame (stream).
+Abstracts an incoming WebSocket frame.
 
 #### new Incoming()
 
+Creates a new instance of the `Incoming` transform stream. Which
+transforms incoming WebSocket frames to node buffers.
+
+#### Event: "header"
+
+    incoming.on('header', function(header) {
+      // decide how to handle frame data by
+      // reading header object
+    });
+
+Emitted when head bytes of WebSocket frame are parsed. The `header`
+argument contains `fin`, `opcode`, `length` and so on. You will mainly
+be interested in `header.opcode` as the other values are more for
+internal use.
+
 #### Event: "readable"
+
+    var message = '';
+
+    incoming.on('readable', function() {
+      message += incoming.read().toString();
+    });
+
+Emitted when there is payload to read from the frame.
 
 #### Event: "end"
 
+    incoming.on('end', function() {
+      // log prev buffered messages
+      console.log(message);
+    });
+
+Emitted when frame ends **and** data was consumed with
+`incoming.read()`.
+
 ### Outgoing
 
-Abstracts an outgoing WebSocket frame (stream).
+Abstracts an outgoing WebSocket frame.
 
-#### new Outgoing(socket)
+#### new Outgoing([options])
 
-Creates a new instance of `Outgoing` bound to `socket`.
+Returns a new instance of `Outgoing` transform stream. As this is a
+transform and not a writable stream you must pipe `outgoing` to the
+websocket `socket` provided by the server "connect" event.
 
-#### outgoing.write(data)
+#### outgoing.header
 
-Writes data to a WebSocket. Except you directly use `outgoing.end()` the
-written data will be sent as fragmented frame. This is the only way to
-have a true stream like approach else we always would require the
-complete payload length.
+    outgoing.header.final = true;
+    outgoing.header.masked = false;
+    outgoing.header.opcode = 0x01;
+    outgoing.header.length = 0x0a;
 
-#### outgoing.end([data])
+    outgoing.write('Hello World').pipe(wsocket, { end: false });
 
-Ends a fragmented frame stream.
+Sets the header information of an outgoing frame. You can omit `final`
+and `opcode` as they will use most common default values `true` and
+`0x01` (text frame). However you need to set the length which makes it
+difficult to actually stream stuff as you always need to know the frame
+length. Still you can somehow implement your own stream by doing:
+
+    var stream = fs.createReadStream('./foobar.txt');
+
+    // first frame must be contain opcode
+    new Outgoing({
+      headers: {
+        fianl: false,
+        opcode: 0x01
+      }
+    }).pipe(wsocket, { end: false }).end();
+
+    stream.on('readable', function() {
+      var chunk = stream.read();
+
+      // between frames must look like this
+      new Outgoing({
+        headers: {
+          final: false,
+          opcode: 0x00,
+          length: chunk.length
+        }
+      }).pipe(wsocket, { end: false }).end(chunk);
+    });
+
+    stream.on('end', function() {
+      // last frame must have final true
+      new Outgoing({
+        headers: {
+          final: true,
+          opcode: 0x00
+        }
+      }).pipe(wsocket, { end: false }).end();
+    });
 
 ## License
 

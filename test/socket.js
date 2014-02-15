@@ -17,9 +17,10 @@ describe('Socket', function() {
 
   describe('Event: "message"', function() {
 
-    it('should be emitted with incoming', function(done) {
-      socket.once('message', function(incoming) {
+    it('should be emitted with streams', function(done) {
+      socket.once('message', function(incoming, outgoing) {
         chai.expect(incoming).to.be.instanceOf(walve.Incoming);
+        chai.expect(outgoing).to.be.instanceOf(walve.Outgoing);
 
         done();
       });
