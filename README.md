@@ -10,6 +10,10 @@
       });
     }).listen(server);
 
+## Examples
+
+You can find working examples in the `/opt` directory of this project.
+
 ## Installation
 
 The package is available on **npm** as **walve**.
