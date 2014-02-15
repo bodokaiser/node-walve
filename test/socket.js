@@ -58,17 +58,21 @@ describe('Socket', function() {
           result += incoming.read().toString();
         });
         incoming.on('end', function() {
-          chai.expect(result).to.equal('Hello');
+          if (counter === 0) {
+            chai.expect(result).to.equal('Hello');
+          }
+          if (counter === 1) {
+            chai.expect(result).to.equal('World');
 
-          if (counter) done();
+            done();
+          }
 
           counter++;
         });
       });
-      source.write(new Buffer([0x81, 0x05]));
-      source.write(new Buffer('Hello'));
-      source.write(new Buffer([0x81, 0x05]));
-      source.write(new Buffer('Hello'));
+
+      source.write(new Buffer([0x81, 0x05, 0x48, 0x65, 0x6c, 0x6c, 0x6f]));
+      source.write(new Buffer([0x82, 0x05, 0x57, 0x6f, 0x72, 0x6c, 0x64]));
     });
 
   });

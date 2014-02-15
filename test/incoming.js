@@ -137,31 +137,32 @@ describe('Incoming', function() {
 
     it('should be emitted once', function(done) {
       incoming.once('readable', function() {
-        var result = incoming.read().toString();
-
-        chai.expect(result).to.equal('Hello');
+        chai.expect(incoming.read().toString()).to.equal('Hello');
 
         done();
       });
-      incoming.write(new Buffer([0x81, 0x05]));
-      incoming.write(new Buffer('Hello'));
+      incoming.write(new Buffer([0x81, 0x05, 0x48, 0x65, 0x6c, 0x6c, 0x6f]));
     });
 
-    it('should be emitted twice', function(done) {
-      incoming.once('readable', function() {
-        var result1 = incoming.read().toString();
+    it('should be emitted multiple', function(done) {
+      var result = '';
 
-        incoming.once('readable', function() {
-          var result2 = incoming.read().toString();
+      incoming.on('readable', function() {
+        result += incoming.read().toString();
 
-          chai.expect(result1 + result2).to.equal('HelloWorld');
+        if (result.length === 5) {
+          chai.expect(result).to.equal('Hello');
 
           done();
-        });
+        }
       });
-      incoming.write(new Buffer([0x81, 0x0a]));
-      incoming.write(new Buffer('Hello'));
-      incoming.write(new Buffer('World'));
+      incoming.write(new Buffer([0x81]));
+      incoming.write(new Buffer([0x05]));
+      incoming.write(new Buffer([0x48]));
+      incoming.write(new Buffer([0x65]));
+      incoming.write(new Buffer([0x6c]));
+      incoming.write(new Buffer([0x6c]));
+      incoming.write(new Buffer([0x6f]));
     });
 
     it('should be emitted with unmasked data', function(done) {
@@ -227,23 +228,71 @@ describe('Incoming', function() {
 
   });
 
-  describe('Event: "end"', function() {
+  describe('Event: "flush"', function() {
 
-    it('should be emitted on no payload', function(done) {
-      incoming.on('readable', function() {
-        incoming.read();
+    it('should not be emitted', function() {
+      incoming.once('flush', function() {
+        throw new Error('Should not be emitted.');
       });
-      incoming.once('end', done);
-      incoming.write(new Buffer([0x81, 0x00]));
+      incoming.write(new Buffer([0x82, 0x00]));
     });
 
-    it('should be emitted on payload end', function(done) {
+    it('should be emitted with chunk', function(done) {
+      incoming.once('flush', function(chunk) {
+        chai.expect(chunk).to.eql(new Buffer([0x81, 0x02]));
+
+        done();
+      });
+      incoming.write(new Buffer([0x82, 0x00, 0x81, 0x02]));
+    });
+
+    it('should be emitted with chunk', function(done) {
+      incoming.once('flush', function(chunk) {
+        chai.expect(chunk).to.eql(new Buffer([0x81]));
+
+        done();
+      });
+      incoming.write(new Buffer([0x82]));
+      incoming.write(new Buffer([0x01]));
+      incoming.write(new Buffer([0xff, 0x81]));
+    });
+
+  });
+
+  describe('Event: "end"', function() {
+
+    it('should be emitted on end of empty frame', function(done) {
       incoming.on('readable', function() {
         incoming.read();
       });
       incoming.once('end', done);
-      incoming.write(new Buffer([0x81, 0x05]));
-      incoming.write(new Buffer('World'));
+      incoming.write(new Buffer([0x82, 0x00]));
+    });
+
+    it('should be emitted on end of empty advanced frame', function(done) {
+      incoming.on('readable', function() {
+        incoming.read();
+      });
+      incoming.once('end', done);
+      incoming.write(new Buffer([0x82, 0x80, 0x01, 0x02, 0x03, 0x04]));
+    });
+
+    it('should be emitted on end of advanced frame', function(done) {
+      incoming.on('readable', function() {
+        incoming.read();
+      });
+      incoming.once('end', done);
+      incoming.write(new Buffer([0x82, 0x81, 0x01, 0x02, 0x03, 0x04, 0x01]));
+    });
+
+    it('should be emitted on end of fragmented frame', function(done) {
+      incoming.on('readable', function() {
+        incoming.read();
+      });
+      incoming.once('end', done);
+      incoming.write(new Buffer([0x82]));
+      incoming.write(new Buffer([0x01]));
+      incoming.write(new Buffer([0x01]));
     });
 
   });
