@@ -14,6 +14,9 @@
 
 You can find working examples in the `/opt` directory of this project.
 
+- **echo.js**: echos messages back to the browser
+- **stream.js**: streams README.md into the browser
+
 ## Installation
 
 The package is available on **npm** as **walve**.
@@ -125,42 +128,7 @@ websocket `socket` provided by the server "connect" event.
 
 Sets the header information of an outgoing frame. You can omit `final`
 and `opcode` as they will use most common default values `true` and
-`0x01` (text frame). However you need to set the length which makes it
-difficult to actually stream stuff as you always need to know the frame
-length. Still you can somehow implement your own stream by doing:
-
-    var stream = fs.createReadStream('./foobar.txt');
-
-    // first frame must be contain opcode
-    new Outgoing({
-      headers: {
-        fianl: false,
-        opcode: 0x01
-      }
-    }).pipe(wsocket, { end: false }).end();
-
-    stream.on('readable', function() {
-      var chunk = stream.read();
-
-      // between frames must look like this
-      new Outgoing({
-        headers: {
-          final: false,
-          opcode: 0x00,
-          length: chunk.length
-        }
-      }).pipe(wsocket, { end: false }).end(chunk);
-    });
-
-    stream.on('end', function() {
-      // last frame must have final true
-      new Outgoing({
-        headers: {
-          final: true,
-          opcode: 0x00
-        }
-      }).pipe(wsocket, { end: false }).end();
-    });
+`0x01` (text frame).
 
 ## License
 
