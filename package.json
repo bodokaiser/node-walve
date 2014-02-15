@@ -1,6 +1,6 @@
 {
 
-  "name": "salvatore",
+  "name": "wesos",
 
   "author": "Bodo Kaiser <i@bodokaiser.io>",
 
@@ -34,11 +34,11 @@
   },
 
   "repository": {
-      "url": "git://github.com/bodokaiser/node-salvatore.git"
+      "url": "git://github.com/bodokaiser/node-wesos.git"
   },
 
   "bugs": {
-      "url": "https://github.com/bodokaiser/node-salvatore/issues"
+      "url": "https://github.com/bodokaiser/node-wesos/issues"
   }
 
 }

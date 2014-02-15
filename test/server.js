@@ -1,158 +1,61 @@
-var chai = require('chai');
-var http = require('http');
+var chai   = require('chai');
+var http   = require('http');
+var events = require('events');
+var wesos  = require('../lib');
 
-var lib    = require('../lib');
+const PORT = process.env.PORT || 3000;
 
 describe('Server', function() {
 
   var server, wserver;
 
   beforeEach(function() {
-    server = new http.Server().listen(3000);
-    wserver = new lib.Server().listen(server);
+    server = new http.Server().listen(PORT);
+    wserver = new wesos.Server().listen(server);
   });
 
-  afterEach(function() {
-    server.close();
-  });
+  describe('new Server([options])', function() {
 
-  describe('Event: "open"', function() {
-
-    it('should be emitted when a new client connects', function(done) {
-      wserver.once('open', function(wsocket) {
-        chai.expect(wsocket).to.be.an.instanceof(lib.Socket);
-
-        done();
-      });
-
-      new lib.UpgradeRequest('ws://localhost:3000').end();
+    it('should return instance of EventEmitter', function() {
+      chai.expect(wserver).to.be.an.instanceOf(events.EventEmitter);
     });
 
   });
 
-  describe('Event: "pong"', function() {
+  describe('#listen(server)', function() {
 
-    it('should be emitted when a pong frame is received', function(done) {
-      wserver.once('pong', function(wsocket, incoming, outgoing) {
-        chai.expect(wsocket).to.be.an.instanceof(lib.Socket);
-        chai.expect(incoming).to.be.an.instanceof(lib.Incoming);
-        chai.expect(outgoing).to.be.an.instanceof(lib.Outgoing);
+    it('should listen to the servers "upgrade" event', function() {
+      wserver = new wesos.Server().listen(server);
 
-        var buffer = [];
-        incoming.on('readable', function() {
-          buffer.push(incoming.read());
-        });
-        incoming.on('end', function() {
-          chai.expect(Buffer.concat(buffer))
-          .to.eql(new Buffer('Hey'));
-
-          done();
-        });
-      });
-
-      var req = new lib.UpgradeRequest('ws://localhost:3000');
-
-      req.once('upgrade', function(response, socket) {
-        socket.write(new Buffer([0x8a, 0x03, 0x48, 0x65, 0x79]));
-      });
-
-      req.end();
+      chai.expect(server.listeners('upgrade')).to.have.length(2);
     });
 
   });
 
-  describe('Event: "message"', function() {
+  describe('Event: "connect"', function() {
 
-    it('should be emitted when a text frame is received', function(done) {
-      wserver.once('message', function(wsocket, incoming, outgoing) {
-        chai.expect(wsocket).to.be.an.instanceof(lib.Socket);
-        chai.expect(incoming).to.be.an.instanceof(lib.Incoming);
-        chai.expect(outgoing).to.be.an.instanceof(lib.Outgoing);
+    it('should be emitted on successful http upgrade', function(done) {
+      http.request({
+        headers: {
+          'Upgrade': 'websocket',
+          'Connection': 'Upgrade',
+          'Sec-WebSocket-Key': '1234',
+          'Sec-WebSocket-Version': '13'
+        },
+        port: PORT
+      }).end();
 
-        var buffer = [];
-        incoming.on('readable', function() {
-          buffer.push(incoming.read());
-        });
-        incoming.on('end', function() {
-          chai.expect(Buffer.concat(buffer))
-          .to.eql(new Buffer('Hello'));
-
-          done();
-        });
-      });
-
-      var req = new lib.UpgradeRequest('ws://localhost:3000');
-
-      req.once('upgrade', function(response, socket) {
-        socket.write(new Buffer([0x81, 0x85, 0x37, 0xfa, 0x21]));
-        socket.write(new Buffer([0x3d, 0x7f, 0x9f, 0x4d]));
-        socket.write(new Buffer([0x51, 0x58]));
-      });
-
-      req.end();
-    });
-
-    it('should be emitted when a binary frame is received', function(done) {
-      wserver.once('message', function(wsocket, incoming, outgoing) {
-        chai.expect(wsocket).to.be.an.instanceof(lib.Socket);
-        chai.expect(incoming).to.be.an.instanceof(lib.Incoming);
-        chai.expect(outgoing).to.be.an.instanceof(lib.Outgoing);
-
-        var buffer = [];
-        incoming.on('readable', function() {
-          buffer.push(incoming.read());
-        });
-        incoming.on('end', function() {
-          chai.expect(Buffer.concat(buffer))
-          .to.eql(new Buffer([0x01, 0x02, 0x03]));
-
-          done();
-        });
-      });
-
-      var req = new lib.UpgradeRequest('ws://localhost:3000');
-
-      req.once('upgrade', function(response, socket) {
-        socket.write(new Buffer([0x82, 0x03, 0x01, 0x02, 0x03]));
-      });
-
-      req.end();
-    });
-
-  });
-
-  describe('Event: "close"', function() {
-
-    it('should be emitted when a close frame is received', function(done) {
-      wserver.once('close', function(wsocket, incoming) {
-        chai.expect(wsocket).to.be.an.instanceof(lib.Socket);
-        chai.expect(incoming).to.be.an.instanceof(lib.Incoming);
-
-        var buffer = [];
-        incoming.on('readable', function() {
-          buffer.push(incoming.read());
-        });
-        incoming.on('end', function() {
-          chai.expect(Buffer.concat(buffer))
-          .to.eql(new Buffer([0x48, 0x65, 0x79]));
-
-          done();
-        });
-      });
-
-      var req = new lib.UpgradeRequest('ws://localhost:3000');
-
-      req.once('upgrade', function(response, socket) {
-        socket.write(new Buffer([0x88, 0x03, 0x48, 0x65, 0x79]));
-      });
-
-      req.end();
+      wserver.once('connect', done);
     });
 
   });
 
   describe('Event: "error"', function() {
 
+  });
+
+  afterEach(function() {
+    server.close();
   });
 
 });
