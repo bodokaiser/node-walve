@@ -34,8 +34,8 @@ describe('Server', function() {
 
   describe('Event: "connect"', function() {
 
-    it('should be emitted on successful http upgrade', function(done) {
-      http.request({
+    it('should be emitted on WebSocket connect', function(done) {
+      var request = http.request({
         headers: {
           'Upgrade': 'websocket',
           'Connection': 'Upgrade',
@@ -43,9 +43,28 @@ describe('Server', function() {
           'Sec-WebSocket-Version': '13'
         },
         port: PORT
-      }).end();
+      });
+      request.once('upgrade', function(res, socket) {
+        socket.write(new Buffer([0x81, 0x03, 0x48, 0x65, 0x79]));
+      });
+      request.end();
 
-      wserver.once('connect', done);
+      wserver.once('connect', function(wsocket) {
+        chai.expect(wsocket).to.be.an.instanceOf(wesos.Socket);
+
+        wsocket.once('message', function(incoming) {
+          var result = '';
+
+          incoming.on('readable', function() {
+            result += incoming.read().toString();
+          });
+          incoming.on('end', function() {
+            chai.expect(result).to.equal('Hey');
+
+            done();
+          });
+        });
+      });
     });
 
   });
