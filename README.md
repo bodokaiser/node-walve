@@ -1,19 +1,19 @@
-# wesos
+# node-walve
 
-**wesos** is a stream based WebSocket implementation for node.js.
+**walve** is a stream based WebSocket implementation for node.js.
 
-    var wesos = require('wesos');
+    var walve = require('walve');
 
     // will broadcast all incoming messages to all sockets
-    wesos.createServer(function(wsocket, wserver) {
+    walve.createServer(function(wsocket, wserver) {
       wsocket.pipe(wserver);
     }).listen(server);
 
 ## Installation
 
-The package is available on **npm** as **wesos**.
+The package is available on **npm** as **walve**.
 
-    npm install --save wesos
+    npm install --save walve
 
 ## Documentation
 

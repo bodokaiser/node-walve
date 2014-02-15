@@ -1,6 +1,6 @@
 {
 
-  "name": "wesos",
+  "name": "walve",
 
   "author": "Bodo Kaiser <i@bodokaiser.io>",
 
@@ -24,8 +24,7 @@
   },
 
   "dependencies": {
-      "websocket-parser": "0.0.2",
-      "websocket-upgrade": "0.0.1"
+
   },
 
   "devDependencies": {
@@ -34,11 +33,11 @@
   },
 
   "repository": {
-      "url": "git://github.com/bodokaiser/node-wesos.git"
+      "url": "git://github.com/bodokaiser/node-walve.git"
   },
 
   "bugs": {
-      "url": "https://github.com/bodokaiser/node-wesos/issues"
+      "url": "https://github.com/bodokaiser/node-walve/issues"
   }
 
 }

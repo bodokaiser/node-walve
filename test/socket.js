@@ -1,6 +1,6 @@
 var chai   = require('chai');
 var stream = require('stream');
-var wesos  = require('../lib');
+var walve  = require('../lib');
 
 describe('Socket', function() {
 
@@ -8,7 +8,7 @@ describe('Socket', function() {
 
   beforeEach(function() {
     source = new stream.PassThrough();
-    socket = new wesos.Socket(source);
+    socket = new walve.Socket(source);
   });
 
   describe('new Socket(socket)', function() {
@@ -19,7 +19,7 @@ describe('Socket', function() {
 
     it('should be emitted with incoming', function(done) {
       socket.once('message', function(incoming) {
-        chai.expect(incoming).to.be.instanceOf(wesos.Incoming);
+        chai.expect(incoming).to.be.instanceOf(walve.Incoming);
 
         done();
       });
