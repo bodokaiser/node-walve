@@ -25,9 +25,39 @@ describe('Server', function() {
   describe('#listen(server)', function() {
 
     it('should listen to the servers "upgrade" event', function() {
-      wserver = new walve.Server().listen(server);
+      chai.expect(server.listeners('upgrade')).to.have.length(1);
+    });
 
-      chai.expect(server.listeners('upgrade')).to.have.length(2);
+    it('should listen on url specific upgrades', function(done) {
+      wserver.url = '/images';
+
+      var req1 = http.request({
+        headers: {
+          'Upgrade': 'websocket',
+          'Connection': 'Upgrade',
+          'Sec-WebSocket-Key': '1234',
+          'Sec-WebSocket-Version': '13'
+        },
+        path: '/', port: PORT
+      });
+      req1.once('upgrade', function() {
+        throw new Error('Should not upgrade!');
+      });
+      req1.end();
+
+      var req2 = http.request({
+        headers: {
+          'Upgrade': 'websocket',
+          'Connection': 'Upgrade',
+          'Sec-WebSocket-Key': '1234',
+          'Sec-WebSocket-Version': '13'
+        },
+        path: '/images', port: PORT
+      });
+      req2.once('upgrade', function() {
+        done();
+      });
+      req2.end();
     });
 
   });

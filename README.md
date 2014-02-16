@@ -38,7 +38,8 @@ The package is available on **npm** as **walve**.
 
 #### new Server([options])
 
-Creates a new `Server` instance.
+Creates a new `Server` instance. Valid `options` are for example `url`
+which can be used to have multiple websocket servers on one http server.
 
 #### Event: "connect"
 
