@@ -6,7 +6,7 @@
 
   "license": "BSD/MIT",
 
-  "version": "0.0.0",
+  "version": "0.0.1",
 
   "keywords": ["http", "stream", "websocket", "websockets", "rfc6455"],
 

@@ -1,35 +1,19 @@
 var fs    = require('fs');
 var path  = require('path');
 var http  = require('http');
-var walve = require('../lib');
-
-var filename = path.join(__dirname, '../README.md');
+var walve = require('../../lib');
 
 var server = http.createServer(function(request, response) {
-  var html = '<DOCTYPE html>'
-    + '<html>'
-      + '<body>'
-        + '<h1>Hello</h1>'
-        + '<p id="content"></p>'
-        + '<script>'
-          + 'var ws = new WebSocket(\'ws://localhost:3000\');\n'
-          + 'ws.onmessage = function(e) {'
-            + 'document.getElementById(\'content\').innerText += e.data;'
-          + '};\n'
-        + '</script>'
-      + '</body>'
-    + '</html>';
-
   response.writeHead(200, {
     'Content-Type': 'text/html'
   });
-  response.write(html);
-  response.end();
+
+  fs.createReadStream(__dirname + '/index.html').pipe(response);
 }).listen(3000);
 
 var wserver = walve.createServer(function(wsocket) {
 
-  var filestream = fs.createReadStream(filename);
+  var filestream = fs.createReadStream(__dirname + '/../../README.md');
 
   createOutgoing(wsocket, {
     final: false,

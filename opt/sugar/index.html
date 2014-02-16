@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>walve: api sugar example</title>
+  </head>
+  <body>
+    <h1>walve: api sugar example</h1>
+    <h2>open a second tab and click on the heading</h2>
+    <p></p>
+    <script>
+      var ws = new WebSocket('ws://localhost:3000');
+
+      ws.addEventListener('open', function(e) {
+        document.body.addEventListener('click', function(e) {
+          ws.send('Click on body.\n');
+        });
+      });
+      ws.addEventListener('message', function(e) {
+        document.querySelector('p').innerText += e.data;
+      });
+    </script>
+  </body>
+</html>

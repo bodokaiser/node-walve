@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>walve: file stream example</title>
+  </head>
+  <body>
+    <h1>walve: file stream example</h1>
+    <p id="content"></p>
+    <script>
+      var ws = new WebSocket('ws://localhost:3000');
+
+      ws.addEventListener('message', function(e) {
+        document.getElementById('content').innerText += e.data;
+      });
+    </script>
+  </body>
+</html>

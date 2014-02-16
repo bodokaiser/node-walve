@@ -14,8 +14,17 @@
 
 You can find working examples in the `/opt` directory of this project.
 
-- **echo.js**: echos messages back to the browser
-- **stream.js**: streams README.md into the browser
+- **echo**: echos messages back to the browser
+- **sugar**: extends `Server` with some api sugar
+- **stream**: streams file through websocket to document
+
+Furthermore there are currently two real world examples using walve.
+Feel free to add own projects:
+
+- [nearby](https://github.com/bodokaiser/nearby) real time geolocation
+  tracking with walve and google maps
+- [messenger](https://github.com/bodokaiser/messenger) real time
+  messenger with support for image streaming
 
 ## Installation
 
