@@ -11,12 +11,13 @@ var server = http.createServer(function(request, response) {
 }).listen(3000);
 
 var wserver = walve.createServer(function(wsocket) {
-  wsocket.on('message', function(incoming, outgoing) {
+  wsocket.on('incoming', function(incoming) {
     incoming.once('header', function(header) {
-      outgoing.header.length = header.length;
+      var outgoing = new walve.Outgoing({
+        header: { length: header.length }
+      });
 
-      incoming.pipe(outgoing);
-      outgoing.pipe(wsocket, { end: false });
+      incoming.pipe(outgoing).pipe(wsocket, { end: false });
     });
   });
 }).listen(server);

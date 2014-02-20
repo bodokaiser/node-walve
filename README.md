@@ -5,7 +5,7 @@
     var walve = require('walve');
 
     walve.createServer(function(wsocket) {
-      wsocket.on('message', function(incoming) {
+      wsocket.on('incoming', function(incoming) {
         // handle readable incoming stream
       });
     }).listen(server);
@@ -63,10 +63,10 @@ Abstracts a single WebSocket connection.
 Creates a new duplex stream `Socket` which reads and writes from the
 underlaying TCP socket.
 
-#### Event: "message"
+#### Event: "incoming"
 
-    wsocket.on('message', function(incoming) {
-      incoming.pipe(process.stdout);
+    wsocket.on('incoming', function(incoming) {
+      incoming.pipe(process.stdout, { end: false });
     });
 
 Emitted when a WebSocket frame is received. First argument is a an

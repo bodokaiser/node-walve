@@ -30,7 +30,7 @@ function listenToConnectEvent(server) {
   server.on('connect', function(socket) {
     server.connections.push(socket);
 
-    socket.on('message', function(incoming) {
+    socket.on('incoming', function(incoming) {
       incoming.on('header', function(header) {
         if (header.opcode !== 0x01) return;
         if (header.length > 0x7d) return;

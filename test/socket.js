@@ -15,12 +15,11 @@ describe('Socket', function() {
 
   });
 
-  describe('Event: "message"', function() {
+  describe('Event: "incoming"', function() {
 
-    it('should be emitted with streams', function(done) {
-      socket.once('message', function(incoming, outgoing) {
+    it('should be emitted with incoming', function(done) {
+      socket.once('incoming', function(incoming, outgoing) {
         chai.expect(incoming).to.be.instanceOf(walve.Incoming);
-        chai.expect(outgoing).to.be.instanceOf(walve.Outgoing);
 
         done();
       });
@@ -28,7 +27,7 @@ describe('Socket', function() {
     });
 
     it('should be emitted at single incoming', function(done) {
-      socket.once('message', function(incoming) {
+      socket.once('incoming', function(incoming) {
         var result = '';
 
         incoming.on('readable', function() {
@@ -52,7 +51,7 @@ describe('Socket', function() {
     it('should be emitted at double incoming', function(done) {
       var counter = 0;
 
-      socket.on('message', function(incoming) {
+      socket.on('incoming', function(incoming) {
         var result = '';
 
         incoming.on('readable', function() {
