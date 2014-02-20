@@ -31,18 +31,16 @@ function listenToConnectEvent(server) {
     server.connections.push(socket);
 
     socket.on('incoming', function(incoming) {
-      incoming.on('header', function(header) {
-        if (header.opcode !== 0x01) return;
-        if (header.length > 0x7d) return;
+      if (incoming.header.opcode !== 0x01) return;
+      if (incoming.header.length > 0x7d) return;
 
-        var message = '';
-        incoming.on('readable', function() {
-          message += incoming.read().toString();
-        });
-        incoming.on('end', function() {
-          socket.emit('text', message);
-          server.emit('text', message, socket);
-        });
+      var message = '';
+      incoming.on('readable', function() {
+        message += incoming.read().toString();
+      });
+      incoming.on('end', function() {
+        socket.emit('text', message);
+        server.emit('text', message, socket);
       });
     });
     socket.on('end', function() {

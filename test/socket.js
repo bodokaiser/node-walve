@@ -79,6 +79,16 @@ describe('Socket', function() {
 
   describe('Event: "error"', function() {
 
+    it('should be emitted on unsupported opcode', function(done) {
+      socket.on('error', function(err) {
+        chai.expect(err).to.be.instanceOf(Error);
+
+        done();
+      });
+
+      source.end(new Buffer([0x84, 0x00]));
+    });
+
   });
 
   describe('Event: "ping"', function() {
@@ -106,6 +116,17 @@ describe('Socket', function() {
   });
 
   describe('Event: "end"', function() {
+
+    it('should be emitted on close frame', function(done) {
+      socket.on('readable', function() {
+        socket.read();
+      });
+      socket.on('end', function() {
+        done();
+      });
+
+      source.end(new Buffer([0x88, 0x00]));
+    });
 
     it('should be emitted on source "end"', function(done) {
       socket.on('readable', function() {

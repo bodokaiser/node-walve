@@ -85,15 +85,13 @@ Abstracts an incoming WebSocket frame.
 Creates a new instance of the `Incoming` transform stream. Which
 transforms incoming WebSocket frames to node buffers.
 
-#### Event: "header"
+#### incoming.header
 
-    incoming.on('header', function(header) {
-      // decide how to handle frame data by
-      // reading header object
-    });
+    if (incoming.header.opcode === 0x01) {
+        // handle data as unicode
+    }
 
-Emitted when head bytes of WebSocket frame are parsed. The `header`
-argument contains `fin`, `opcode`, `length` and so on. You will mainly
+Contains `fin`, `opcode`, `length` and so on. You will mainly
 be interested in `header.opcode` as the other values are more for
 internal use.
 
@@ -125,7 +123,8 @@ Abstracts an outgoing WebSocket frame.
 
 Returns a new instance of `Outgoing` transform stream. As this is a
 transform and not a writable stream you must pipe `outgoing` to the
-websocket `socket` provided by the server "connect" event.
+websocket `socket` provided by the server "connect" event. Options
+can contain a `header` object. See below for more.
 
 #### outgoing.header
 
