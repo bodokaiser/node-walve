@@ -77,10 +77,6 @@ describe('Socket', function() {
 
   });
 
-  describe('Event: "close"', function() {
-
-  });
-
   describe('Event: "error"', function() {
 
   });
@@ -89,7 +85,49 @@ describe('Socket', function() {
 
   });
 
+  describe('Event: "close"', function() {
+
+    it('should be emitted on source "end"', function(done) {
+      socket.on('close', function() {
+        done();
+      });
+
+      source.end();
+    });
+
+    it('should be emitted on source "timeout"', function(done) {
+      socket.on('close', function() {
+        done();
+      });
+
+      source.emit('timeout');
+    });
+
+  });
+
   describe('Event: "end"', function() {
+
+    it('should be emitted on source "end"', function(done) {
+      socket.on('readable', function() {
+        socket.read();
+      });
+      socket.on('end', function() {
+        done();
+      });
+
+      source.end();
+    });
+
+    it('should be emitted on source "timeout"', function(done) {
+      socket.on('readable', function() {
+        console.log(socket.read());
+      });
+      socket.on('end', function() {
+        done();
+      });
+
+      source.emit('timeout');
+    });
 
   });
 
