@@ -82,7 +82,7 @@ describe('Server', function() {
       wserver.once('connect', function(wsocket) {
         chai.expect(wsocket).to.be.an.instanceOf(walve.Socket);
 
-        wsocket.once('message', function(incoming) {
+        wsocket.once('incoming', function(incoming) {
           var result = '';
 
           incoming.on('readable', function() {
