@@ -17,6 +17,7 @@ You can find working examples in the `/opt` directory of this project.
 - **echo**: echos messages back to the browser
 - **sugar**: extends `Server` with some api sugar
 - **stream**: streams file through websocket to document
+- **cluster**: streams file through websocket cluster (hot concurrency)
 
 Furthermore there are currently two real world examples using walve.
 Feel free to add own projects:
