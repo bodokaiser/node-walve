@@ -30,9 +30,9 @@
   },
 
   "devDependencies": {
+    "thor": "1.0.0",
     "chai": "1.9.0",
-    "mocha": "1.17.1",
-    "websocket-benchmark": "0.0.2"
+    "mocha": "1.17.1"
   },
 
   "repository": {
