@@ -10,6 +10,9 @@ THOR_FLAGS = \
 MOCHA_FLAGS = \
 		--reporter spec
 
+test:
+	$(MOCHA) $(MOCHA_FLAGS) test
+
 bench:
 	$(THOR) $(THOR_FLAGS) ws://localhost:3000
 
