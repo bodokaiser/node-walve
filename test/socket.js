@@ -141,13 +141,24 @@ describe('Socket', function() {
 
     it('should be emitted on source "timeout"', function(done) {
       socket.on('readable', function() {
-        console.log(socket.read());
+        socket.read();
       });
       socket.on('end', function() {
         done();
       });
 
       source.emit('timeout');
+    });
+
+    it('should stop emitting "readable"', function(done) {
+      socket.on('readable', function() {
+        throw new Error('Should not be emitted.');
+      });
+      socket.on('end', done).end();
+
+      chai.expect(function() {
+        source.push(new Buffer([0x81, 0x01, 0x48]));
+      }).to.throw;
     });
 
   });
