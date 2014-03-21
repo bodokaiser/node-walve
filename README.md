@@ -77,6 +77,16 @@ instance of `Incoming`.
 
 Emitted when the TCP connection closes.
 
+#### socket.end
+
+    wsocket.end();
+    // actually better:
+    var outgoing = new Outgoing({ opcode: 0x08 });
+    outgoing.pipe(socket);
+    outgoing.end();
+
+Will completly close the TCP socket.
+
 ### Incoming
 
 Abstracts an incoming WebSocket frame.
