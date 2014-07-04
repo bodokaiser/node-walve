@@ -6,7 +6,7 @@
 
   "license": "MIT",
 
-  "version": "0.0.6",
+  "version": "0.0.7",
 
   "keywords": [
     "http",
@@ -14,7 +14,7 @@
     "websocket",
     "websockets",
     "rfc6455"
-  ],
+    ],
 
   "description": "stream based WebSocket implementation",
 
