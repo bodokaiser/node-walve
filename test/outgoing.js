@@ -164,9 +164,10 @@ describe('Outgoing', function() {
 
     it('should transform "buffer" masking header randomly', function(done) {
       outgoing.header.masked = true;
+      outgoing.header.length = 0x05,
 
       outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[1]).to.equal(0x80);
+        chai.expect(outgoing.read()[1]).to.equal(0x85);
 
         outgoing.once('readable', function() {
           chai.expect(outgoing.read()).to.have.length(4);
@@ -174,7 +175,7 @@ describe('Outgoing', function() {
           done();
         });
       });
-      outgoing.write('');
+      outgoing.write('hello');
     });
 
   });
