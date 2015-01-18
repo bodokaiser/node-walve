@@ -24,10 +24,6 @@
     "test": "make test"
   },
 
-  "engines": {
-    "node": "<0.11"
-  },
-
   "dependencies": {
     "readable-stream": "^1.0.33"
   },
