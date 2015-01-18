@@ -6,7 +6,7 @@
 
   "license": "MIT",
 
-  "version": "0.0.8",
+  "version": "1.0.0",
 
   "keywords": [
     "http",
@@ -14,7 +14,7 @@
     "websocket",
     "websockets",
     "rfc6455"
-    ],
+  ],
 
   "description": "stream based WebSocket implementation",
 
@@ -24,10 +24,18 @@
     "test": "make test"
   },
 
+  "engines": {
+    "node": "<0.11"
+  },
+
+  "dependencies": {
+    "readable-stream": "^1.0.33"
+  },
+
   "devDependencies": {
-    "thor": "1.0.0",
-    "chai": "1.9.0",
-    "mocha": "1.17.1"
+    "thor": "^1.0.0",
+    "chai": "^1.9.0",
+    "mocha": "^1.17.1"
   },
 
   "repository": {

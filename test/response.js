@@ -1,7 +1,7 @@
 var chai   = require('chai');
 var http   = require('http');
-var stream = require('stream');
 var walve  = require('../lib');
+var stream = require('readable-stream');
 
 describe('Response', function() {
 

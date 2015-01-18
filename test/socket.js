@@ -1,6 +1,6 @@
 var chai   = require('chai');
-var stream = require('stream');
 var walve  = require('../lib');
+var stream = require('readable-stream');
 
 describe('Socket', function() {
 
