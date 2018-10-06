@@ -1,49 +1,51 @@
-var fs    = require('fs');
-var path  = require('path');
-var http  = require('http');
-var walve = require('../../lib');
+const fs = require('fs')
+const path = require('path')
+const http = require('http')
+const walve = require('../../lib')
 
-var server = http.createServer(function(request, response) {
+let server = http.createServer((request, response) => {
   response.writeHead(200, {
     'Content-Type': 'text/html'
-  });
+  })
 
-  fs.createReadStream(__dirname + '/index.html').pipe(response);
-}).listen(3000);
+  fs.createReadStream(__dirname + '/index.html').pipe(response)
+}).listen(3000)
 
-var wserver = walve.createServer(function(wsocket) {
-
+let wserver = walve.createServer(wsocket => {
   var filestream = fs.createReadStream(__dirname + '/../../README.md');
 
   createOutgoing(wsocket, {
     final: false,
     opcode: 0x01
-  }).end('');
+  }).end('')
 
-  filestream.on('readable', function() {
+  filestream.on('readable', () => {
     var chunk = filestream.read();
+
+    if (!chunk) return
 
     createOutgoing(wsocket, {
       final: false,
       opcode: 0x00,
       length: chunk.length
-    }).end(chunk);
-  });
-
-  filestream.on('end', function() {
+    }).end(chunk)
+  })
+  filestream.on('end', () => {
     createOutgoing(wsocket, {
       final: true,
       opcode: 0x00
-    }).end('');
+    }).end('')
   });
 
-}).listen(server);
+}).listen(server)
 
 function createOutgoing(wsocket, header) {
-  var outgoing =  new walve.Outgoing();
+  let outgoing = new walve.Outgoing()
 
-  outgoing.header = header;
-  outgoing.pipe(wsocket, { end: false });
+  outgoing.header = header
+  outgoing.pipe(wsocket, {
+    end: false
+  })
 
-  return outgoing;
+  return outgoing
 }

@@ -1,52 +1,61 @@
-var util  = require('util');
-var walve = require('../../lib');
+const {
+  Server,
+  Outgoing
+} = require('../../lib')
 
-function Sugar(options) {
-  this.connections = [];
 
-  listenToConnectEvent(this);
+class Sugar extends Server {
 
-  walve.Server.call(this, options);
+  constructor(options) {
+    super(options)
+
+    this.connections = []
+
+    listenToConnectEvent(this)
+  }
+
+  broadcast(chunk) {
+    this.connections.forEach(socket => {
+      let outgoing = new Outgoing({
+        header: {
+          length: chunk.length
+        }
+      });
+
+      outgoing.pipe(socket, {
+        end: false
+      });
+      outgoing.end(chunk);
+    })
+
+    return this
+  }
+
 }
 
-util.inherits(Sugar, walve.Server);
-
-Sugar.prototype.broadcast = function(chunk) {
-  this.connections.forEach(function(socket) {
-    var outgoing = new walve.Outgoing({
-      header: { length: chunk.length }
-    });
-
-    outgoing.pipe(socket, { end: false });
-    outgoing.end(chunk);
-  });
-
-  return this;
-};
-
-module.exports = Sugar;
+module.exports = Sugar
 
 function listenToConnectEvent(server) {
-  server.on('connect', function(socket) {
-    server.connections.push(socket);
+  server.on('connect', socket => {
+    server.connections.push(socket)
 
-    socket.on('incoming', function(incoming) {
-      if (incoming.header.opcode !== 0x01) return;
-      if (incoming.header.length > 0x7d) return;
+    socket.on('incoming', incoming => {
+      if (incoming.header.opcode !== 0x01) return
+      if (incoming.header.length > 0x7d) return
 
-      var message = '';
-      incoming.on('readable', function() {
-        message += incoming.read().toString();
-      });
-      incoming.on('end', function() {
-        socket.emit('text', message);
-        server.emit('text', message, socket);
-      });
-    });
-    socket.on('end', function() {
-      var index = server.connections.indexOf(socket);
+      var message = ''
+      incoming.on('readable', () => {
+        message += incoming.read().toString()
+      })
+      incoming.on('end', () => {
+        socket.emit('text', message)
+        server.emit('text', message, socket)
+      })
+    })
+    socket.on('end', () => {
+      let index = server.connections.indexOf(socket);
 
       server.connections.splice(index, 1);
-    });
-  });
+    })
+  })
 }

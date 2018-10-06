@@ -1,14 +1,14 @@
-var http  = require('http');
-var walve = require('../../lib');
+const http  = require('http')
+const walve = require('../../lib')
 
-var server = http.createServer().listen(3000);
+let server = http.createServer().listen(3000);
 
-var wserver = walve.createServer(function(wsocket) {
-  wsocket.on('incoming', function(incoming) {
+let wserver = walve.createServer(wsocket => {
+  wsocket.on('incoming', incoming => {
     var outgoing = new walve.Outgoing({
       header: { length: incoming.header.length }
-    });
+    })
 
-    incoming.pipe(outgoing).pipe(wsocket, { end: false });
+    incoming.pipe(outgoing).pipe(wsocket, { end: false })
   });
-}).listen(server);
+}).listen(server)

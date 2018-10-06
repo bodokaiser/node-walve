@@ -1,16 +1,11 @@
-var os      = require('os');
-var cluster = require('cluster');
+const os      = require('os')
+const cluster = require('cluster')
 
-var max = os.cpus().length;
+const max = os.cpus().length
 
-for (var i = 0; i < max; i++) {
-  cluster.fork();
+for (let i = 0; i < max; i++) {
+  cluster.fork()
 }
 
-cluster.on('fork', function(worker) {
-  console.log('worker #' + worker.id + ' forked.');
-});
-
-cluster.on('exit', function(worker) {
-  console.log('worker #' + worker.id + ' exited.');
-});
+cluster.on('fork', worker => console.log(`worker #${worker.id} forked.`))
+cluster.on('exit', worker => console.log(`worker #${worker.id} exited.`))

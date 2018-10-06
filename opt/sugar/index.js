@@ -1,20 +1,20 @@
-var fs   = require('fs');
-var http = require('http');
+const fs   = require('fs')
+const http = require('http')
 
-var Server = require('./server');
+const WSServer = require('./server')
 
-var server = http.createServer(function(request, response) {
+let server = http.createServer((request, response) => {
   response.writeHead(200, {
     'Content-Type': 'text/html'
-  });
+  })
 
-  fs.createReadStream(__dirname + '/index.html').pipe(response);
-}).listen(3000);
+  fs.createReadStream(__dirname + '/index.html').pipe(response)
+}).listen(3000)
 
-var wserver = new Server();
+let wserver = new WSServer();
 
-wserver.on('text', function(message) {
-  wserver.broadcast(message);
-});
+wserver.on('text', message => {
+  wserver.broadcast(message)
+})
 
-wserver.listen(server);
+wserver.listen(server)
