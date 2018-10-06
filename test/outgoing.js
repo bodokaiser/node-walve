@@ -1,224 +1,213 @@
-var chai   = require('chai');
-var walve  = require('../lib');
-var stream = require('readable-stream');
+const chai = require('chai')
+const walve = require('../lib')
+const stream = require('readable-stream')
 
-describe('Outgoing', function() {
+describe('Outgoing', () => {
 
-  var outgoing;
+  var outgoing
 
-  beforeEach(function() {
-    outgoing = new walve.Outgoing();
-  });
+  beforeEach(() => {
+    outgoing = new walve.Outgoing()
+  })
 
-  describe('new Outgoing()', function() {
+  describe('new Outgoing()', () => {
 
-    it('should return instance of Transform', function() {
-      chai.expect(outgoing).to.be.an.instanceOf(stream.Transform);
-    });
+    it('should return instance of Transform', () => {
+      chai.expect(outgoing).to.be.an.instanceOf(stream.Transform)
+    })
 
-  });
+  })
 
-  describe('Event: "readable"', function() {
+  describe('Event: "readable"', () => {
 
-    it('should transform "true" final header', function(done) {
-      outgoing.header.final = true;
+    it('should transform "true" final header', done => {
+      outgoing.header.final = true
 
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[0]).to.equal(0x81);
+      outgoing.once('readable', () => {
+        chai.expect(outgoing.read()[0]).to.equal(0x81)
 
-        done();
-      });
-      outgoing.write('');
-    });
+        done()
+      })
+      outgoing.write('')
+    })
 
-    it('should transform "false" final header', function(done) {
-      outgoing.header.final = false;
+    it('should transform "false" final header', done => {
+      outgoing.header.final = false
 
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[0]).to.equal(0x01);
+      outgoing.once('readable', () => {
+        chai.expect(outgoing.read()[0]).to.equal(0x01)
 
-        done();
-      });
-      outgoing.write('');
-    });
+        done()
+      })
+      outgoing.write('')
+    })
 
-    it('should transform "true" masked header', function(done) {
-      outgoing.header.masked = true;
+    it('should transform "true" masked header', done => {
+      outgoing.header.masked = true
 
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[1]).to.equal(0x80);
+      outgoing.once('readable', () => {
+        chai.expect(outgoing.read()[1]).to.equal(0x80)
 
-        done();
-      });
-      outgoing.write('');
-    });
+        done()
+      })
+      outgoing.write('')
+    })
 
-    it('should transform "false" masked header', function(done) {
-      outgoing.header.masked = false;
+    it('should transform "false" masked header', done => {
+      outgoing.header.masked = false
 
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[1]).to.equal(0x00);
+      outgoing.once('readable', () => {
+        chai.expect(outgoing.read()[1]).to.equal(0x00)
 
-        done();
-      });
-      outgoing.write('');
-    });
+        done()
+      })
+      outgoing.write('')
+    })
 
-    it('should transform "0x08" opcode header', function(done) {
-      outgoing.header.opcode = 0x08;
+    it('should transform "0x08" opcode header', done => {
+      outgoing.header.opcode = 0x08
 
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[0]).to.equal(0x88);
+      outgoing.once('readable', () => {
+        chai.expect(outgoing.read()[0]).to.equal(0x88)
 
-        done();
-      });
-      outgoing.write('');
-    });
+        done()
+      })
+      outgoing.write('')
+    })
 
-    it('should transform "0x7d" length header', function(done) {
-      outgoing.header.length = 0x7d;
+    it('should transform "0x7d" length header', done => {
+      outgoing.header.length = 0x7d
 
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[1]).to.equal(0x7d);
+      outgoing.once('readable', () => {
+        chai.expect(outgoing.read()[1]).to.equal(0x7d)
 
-        done();
-      });
-      outgoing.write('');
-    });
+        done()
+      })
+      outgoing.write('')
+    })
 
-    it('should transform "0x7e" length header', function(done) {
-      outgoing.header.length = 0x7e;
+    it('should transform "0x7e" length header', done => {
+      outgoing.header.length = 0x7e
 
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[1]).to.equal(0x7e);
+      outgoing.once('readable', () => {
+        chai.expect(outgoing.read().slice(1))
+          .to.eql(Buffer.from([0x7e, 0x00, 0x7e]))
 
-        outgoing.once('readable', function() {
-          chai.expect(outgoing.read().readUInt16BE(0)).to.equal(0x7e);
+        done()
+      })
+      outgoing.write('')
+    })
 
-          done();
-        });
-      });
-      outgoing.write('');
-    });
+    it('should transform "0x7f" length header', done => {
+      outgoing.header.length = 0x7f
 
-    it('should transform "0x7f" length header', function(done) {
-      outgoing.header.length = 0x7f;
+      outgoing.once('readable', () => {
+        chai.expect(outgoing.read().slice(1))
+          .to.eql(Buffer.from([0x7e, 0x00, 0x7f]))
 
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[1]).to.equal(0x7e);
+        done()
+      })
+      outgoing.write('')
+    })
 
-        outgoing.once('readable', function() {
-          chai.expect(outgoing.read().readUInt16BE(0)).to.equal(0x7f);
+    it('should transform "0xffff" length header', done => {
+      outgoing.header.length = 0xffff
 
-          done();
-        });
-      });
-      outgoing.write('');
-    });
+      outgoing.once('readable', () => {
+        chai.expect(outgoing.read().slice(1))
+          .to.eql(Buffer.from([0x7e, 0xff, 0xff]))
 
-    it('should transform "0xffff" length header', function(done) {
-      outgoing.header.length = 0xffff;
+        done()
+      })
+      outgoing.write('')
+    })
 
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[1]).to.equal(0x7e);
+    it('should transform "0x10000" length header', done => {
+      outgoing.header.length = 0x10000
 
-        outgoing.once('readable', function() {
-          chai.expect(outgoing.read().readUInt16BE(0)).to.equal(0xffff);
+      outgoing.once('readable', () => {
+        chai.expect(outgoing.read().slice(1))
+          .to.eql(Buffer.from([
+            0x7f, 0x00, 0x00, 0x00, 0x00,
+                  0x00, 0x01, 0x00, 0x00]))
 
-          done();
-        });
-      });
-      outgoing.write('');
-    });
+        done()
+      })
+      outgoing.write('')
+    })
 
-    it('should transform "0x10000" length header', function(done) {
-      outgoing.header.length = 0x10000;
+    it('should transform "buffer" masking header', done => {
+      outgoing.header.masked = true
+      outgoing.header.masking = Buffer.from([0x01, 0x02, 0x03, 0x04])
 
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[1]).to.equal(0x7f);
+      outgoing.once('readable', () => {
+        let buffer = outgoing.read()
 
-        outgoing.once('readable', function() {
-          chai.expect(outgoing.read().readUInt32BE(4)).to.equal(0x10000);
+        chai.expect(buffer.slice(0, 2)).to.eql(Buffer.from([0x81, 0x80]))
+        chai.expect(buffer.slice(2)).to.eql(outgoing.header.masking)
 
-          done();
-        });
-      });
-      outgoing.write('');
-    });
+        done()
+      })
+      outgoing.write('')
+    })
 
-    it('should transform "buffer" masking header', function(done) {
-      outgoing.header.masked = true;
-      outgoing.header.masking = new Buffer([0x01, 0x02, 0x03, 0x04]);
-
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[1]).to.equal(0x80);
-
-        outgoing.once('readable', function() {
-          chai.expect(outgoing.read()).to.equal(outgoing.header.masking);
-
-          done();
-        });
-      });
-      outgoing.write('');
-    });
-
-    it('should transform "buffer" masking header randomly', function(done) {
-      outgoing.header.masked = true;
+    it('should transform "buffer" masking header randomly', done => {
+      outgoing.header.masked = true
       outgoing.header.length = 0x05,
 
-      outgoing.once('readable', function() {
-        chai.expect(outgoing.read()[1]).to.equal(0x85);
+        outgoing.once('readable', () => {
+          let buffer = outgoing.read()
 
-        outgoing.once('readable', function() {
-          chai.expect(outgoing.read()).to.have.length(4);
+          chai.expect(buffer).to.have.length(2+4+5)
+          chai.expect(buffer.slice(0, 2)).to.eql(Buffer.from([0x81, 0x85]))
+          chai.expect(buffer.slice(6)).to.not.eql(Buffer.from('hello'))
 
-          done();
-        });
-      });
-      outgoing.write('hello');
-    });
+          done()
+        })
+      outgoing.write('hello')
+    })
 
-  });
+  })
 
-  describe('Event: "end"', function() {
+  describe('Event: "end"', () => {
 
-    it('should be emitted on end of empty frame', function(done) {
-      outgoing.header.final = true;
-      outgoing.header.opcode = 0x01;
-      outgoing.header.length = 0x00;
+    it('should be emitted on end of empty frame', done => {
+      outgoing.header.final = true
+      outgoing.header.opcode = 0x01
+      outgoing.header.length = 0x00
 
-      var result = [];
-      outgoing.on('readable', function() {
-        result.push(outgoing.read());
-      });
-      outgoing.on('end', function() {
-        chai.expect(Buffer.concat(result)).to.eql(new Buffer([0x81, 0x00]));
+      var result = []
+      outgoing.on('readable', () => {
+        result.push(outgoing.read())
+      })
+      outgoing.on('end', () => {
+        chai.expect(Buffer.concat(result)).to.eql(Buffer.from([0x81, 0x00]))
 
-        done();
-      });
-      outgoing.write('');
-    });
+        done()
+      })
+      outgoing.write('')
+    })
 
-    it('should be emitted on end of frame payload', function(done) {
-      outgoing.header.final = true;
-      outgoing.header.opcode = 0x01;
-      outgoing.header.length = 0x05;
+    it('should be emitted on end of frame payload', done => {
+      outgoing.header.final = true
+      outgoing.header.opcode = 0x01
+      outgoing.header.length = 0x05
 
-      var result = [];
-      outgoing.on('readable', function() {
-        result.push(outgoing.read());
-      });
-      outgoing.on('end', function() {
-        result = Buffer.concat(result);
+      var result = []
+      outgoing.on('readable', () => {
+        result.push(outgoing.read())
+      })
+      outgoing.on('end', () => {
+        result = Buffer.concat(result.filter(buffer => !!buffer))
 
-        chai.expect(result.slice(0, 2)).to.eql(new Buffer([0x81, 0x05]));
-        chai.expect(result.slice(2).toString()).to.eql('Hello');
+        chai.expect(result.slice(0, 2)).to.eql(Buffer.from([0x81, 0x05]))
+        chai.expect(result.slice(2).toString()).to.eql('Hello')
 
-        done();
-      });
-      outgoing.write('Hello');
-    });
+        done()
+      })
+      outgoing.write('Hello')
+    })
 
-  });
+  })
 
-});
+})

@@ -1,71 +1,72 @@
-var chai   = require('chai');
-var http   = require('http');
-var events = require('events');
-var walve  = require('../lib');
+const chai = require('chai')
+const http = require('http')
+const events = require('events')
+const walve = require('../lib')
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000
 
-describe('Server', function() {
 
-  var server, wserver;
+describe('Server', () => {
 
-  beforeEach(function() {
-    server = new http.Server().listen(PORT);
-    wserver = new walve.Server().listen(server);
-  });
+  var server, wserver
 
-  describe('new Server([options])', function() {
+  beforeEach(() => {
+    server = new http.Server().listen(PORT)
+    wserver = new walve.Server().listen(server)
+  })
 
-    it('should return instance of EventEmitter', function() {
-      chai.expect(wserver).to.be.an.instanceOf(events.EventEmitter);
-    });
+  describe('new Server([options])', () => {
 
-  });
+    it('should return instance of EventEmitter', () => {
+      chai.expect(wserver).to.be.an.instanceOf(events.EventEmitter)
+    })
 
-  describe('#listen(server)', function() {
+  })
 
-    it('should listen to the servers "upgrade" event', function() {
-      chai.expect(server.listeners('upgrade')).to.have.length(1);
-    });
+  describe('#listen(server)', () => {
 
-    it('should listen on url specific upgrades', function(done) {
-      wserver.url = '/images';
+    it('should listen to the servers "upgrade" event', () => {
+      chai.expect(server.listeners('upgrade')).to.have.length(1)
+    })
 
-      var req1 = http.request({
+    it('should listen on url specific upgrades', done => {
+      wserver.url = '/images'
+
+      let req1 = http.request({
         headers: {
           'Upgrade': 'websocket',
           'Connection': 'Upgrade',
           'Sec-WebSocket-Key': '1234',
           'Sec-WebSocket-Version': '13'
         },
-        path: '/', port: PORT
-      });
-      req1.once('upgrade', function() {
-        throw new Error('Should not upgrade!');
-      });
-      req1.end();
+        path: '/',
+        port: PORT
+      })
+      req1.once('upgrade', () => {
+        throw new Error('Should not upgrade!')
+      })
+      req1.end()
 
-      var req2 = http.request({
+      let req2 = http.request({
         headers: {
           'Upgrade': 'websocket',
           'Connection': 'Upgrade',
           'Sec-WebSocket-Key': '1234',
           'Sec-WebSocket-Version': '13'
         },
-        path: '/images', port: PORT
-      });
-      req2.once('upgrade', function() {
-        done();
-      });
-      req2.end();
-    });
+        path: '/images',
+        port: PORT
+      })
+      req2.once('upgrade', () => done())
+      req2.end()
+    })
 
-  });
+  })
 
-  describe('Event: "connect"', function() {
+  describe('Event: "connect"', () => {
 
-    it('should be emitted on WebSocket connect', function(done) {
-      var request = http.request({
+    it('should be emitted on WebSocket connect', done => {
+      let request = http.request({
         headers: {
           'Upgrade': 'websocket',
           'Connection': 'Upgrade',
@@ -73,38 +74,32 @@ describe('Server', function() {
           'Sec-WebSocket-Version': '13'
         },
         port: PORT
-      });
-      request.once('upgrade', function(res, socket) {
-        socket.write(new Buffer([0x81, 0x03, 0x48, 0x65, 0x79]));
-      });
-      request.end();
+      })
+      request.once('upgrade', (res, socket) => {
+        socket.write(Buffer.from([0x81, 0x03, 0x48, 0x65, 0x79]))
+      })
+      request.end()
 
-      wserver.once('connect', function(wsocket) {
-        chai.expect(wsocket).to.be.an.instanceOf(walve.Socket);
+      wserver.once('connect', wsocket => {
+        chai.expect(wsocket).to.be.an.instanceOf(walve.Socket)
 
-        wsocket.once('incoming', function(incoming) {
-          var result = '';
+        wsocket.once('incoming', incoming => {
+          var result = ''
 
-          incoming.on('readable', function() {
-            result += incoming.read().toString();
-          });
-          incoming.on('end', function() {
-            chai.expect(result).to.equal('Hey');
+          incoming.on('readable', () => result += incoming.read().toString())
+          incoming.on('end', () => {
+            chai.expect(result).to.equal('Hey')
 
-            done();
-          });
-        });
-      });
-    });
+            done()
+          })
+        })
+      })
+    })
 
-  });
+  })
 
-  describe('Event: "error"', function() {
+  afterEach(() => {
+    server.close()
+  })
 
-  });
-
-  afterEach(function() {
-    server.close();
-  });
-
-});
+})

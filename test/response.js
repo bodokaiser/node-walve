@@ -1,24 +1,25 @@
-var chai   = require('chai');
-var http   = require('http');
-var walve  = require('../lib');
-var stream = require('readable-stream');
+const chai = require('chai')
+const http = require('http')
+const walve = require('../lib')
+const stream = require('readable-stream')
 
-describe('Response', function() {
+describe('Response', () => {
 
-  var source, request, response;
+  var source, request, response
 
-  beforeEach(function() {
-    source = new stream.PassThrough();
-    request = new http.IncomingMessage(source);
-    response = new walve.Response(request);
-  });
+  beforeEach(() => {
+    source = new stream.PassThrough()
+    request = new http.IncomingMessage(source)
+    request.headers['sec-websocket-key'] = 'dGhlIHNhbXBsZSBub25jZQ=='
+    response = new walve.Response(request)
+  })
 
-  describe('new Response(request)', function() {
+  describe('new Response(request)', () => {
 
-    xit('should be an instance of ServerResponse', function() {
-      chai.expect(response).to.be.instanceOf(http.ServerResponse);
-    });
+    it('should be an instance of ServerResponse', () => {
+      chai.expect(response).to.be.instanceOf(http.ServerResponse)
+    })
 
-  });
+  })
 
-});
+})
